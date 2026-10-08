@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>3D 鐳射反光傳奇卡牌產生器 | 3D Holographic Foil TCG Card Showcase</title>
-  <meta name="description" content="個人專屬 3D 鐳射反光卡牌 (Holographic Foil Card) 展示與展示網頁，具備視差特效、多重全息箔膜、陀螺儀與一鍵 PNG 匯出。">
+  <title>查研觀攝 | 3D 鐳射反光傳奇卡牌</title>
+  <meta name="description" content="專屬 3D 鐳射反光卡牌 (Holographic Foil Card) - 查研觀攝 (Chuck Photos)，工程師斜槓攝影師多工傳奇。">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,40 +22,40 @@
        1. CORE DESIGN SYSTEM & CSS VARIABLES
        ========================================================================== */
     :root {
-      /* Colors */
+      /* Base Color System */
       --bg-dark: #090a10;
-      --bg-gradient: radial-gradient(circle at 50% 20%, #1a1c2e 0%, #080911 75%);
-      --panel-bg: rgba(18, 22, 36, 0.75);
-      --panel-border: rgba(255, 255, 255, 0.12);
-      --panel-glow: rgba(99, 102, 241, 0.15);
+      --bg-gradient: radial-gradient(circle at 50% 20%, #1e1b2e 0%, #080911 75%);
+      --panel-bg: rgba(18, 22, 36, 0.78);
+      --panel-border: rgba(255, 255, 255, 0.14);
+      --panel-glow: rgba(245, 158, 11, 0.2);
       
-      --accent-primary: #6366f1;
-      --accent-gold: #f59e0b;
+      --accent-primary: #f59e0b;
+      --accent-gold: #fbbf24;
       --accent-cyan: #06b6d4;
       --accent-rose: #f43f5e;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
 
-      /* Element Attribute Color Palettes (Dynamic via Theme) */
-      --card-theme-primary: #6366f1;
-      --card-theme-secondary: #4f46e5;
-      --card-theme-glow: rgba(99, 102, 241, 0.5);
-      --card-bg-gradient: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
-      --card-frame-color: #312e81;
+      /* User Selected Theme: ⚙️ 科技金 (Tech Gold) */
+      --card-theme-primary: #f59e0b;
+      --card-theme-secondary: #d97706;
+      --card-theme-glow: rgba(245, 158, 11, 0.6);
+      --card-bg-gradient: linear-gradient(135deg, #451a03 0%, #0f172a 100%);
+      --card-frame-color: #78350f;
       --card-border-gold: linear-gradient(135deg, #fef08a 0%, #d97706 50%, #78350f 100%);
 
-      /* Typography & Customizable Font */
+      /* Typography */
       --font-card-title: 'Cinzel', serif;
       --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'Space Grotesk', monospace;
 
       /* Dynamic Parametric Controls (Fine-Tuning System) */
       --max-tilt-angle: 16; /* degrees limit */
-      --z-depth-scale: 1; /* z-depth depth multiplier */
+      --z-depth-scale: 1; /* z-depth multiplier */
       --glare-spot-size: 60%;
-      --foil-blend-mode: color-dodge;
+      --foil-blend-mode: hard-light; /* Default Silver Phantom optimal blend mode */
       --card-corner-radius: 20px;
-      --card-glow-radius: 30px;
+      --card-glow-radius: 35px;
       
       --art-scale: 1;
       --art-offset-x: 0px;
@@ -69,7 +69,7 @@
       --pointer-from-center: 0;
       --card-rotate-x: 0deg;
       --card-rotate-y: 0deg;
-      --foil-opacity: 0.65;
+      --foil-opacity: 0.7;
     }
 
     * {
@@ -96,8 +96,8 @@
       position: fixed;
       inset: 0;
       background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        linear-gradient(to right, rgba(245, 158, 11, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(245, 158, 11, 0.04) 1px, transparent 1px);
       background-size: 40px 40px;
       pointer-events: none;
       z-index: 0;
@@ -105,14 +105,14 @@
 
     .bg-glow-orb {
       position: fixed;
-      width: 600px;
-      height: 600px;
+      width: 650px;
+      height: 650px;
       border-radius: 50%;
       background: radial-gradient(circle, var(--card-theme-glow) 0%, transparent 70%);
       top: -100px;
-      left: 20%;
-      filter: blur(80px);
-      opacity: 0.4;
+      left: 15%;
+      filter: blur(90px);
+      opacity: 0.45;
       pointer-events: none;
       transition: background 0.5s ease;
       z-index: 0;
@@ -137,14 +137,14 @@
       font-weight: 900;
       font-size: 1.35rem;
       letter-spacing: 1px;
-      background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+      background: linear-gradient(135deg, #ffffff 0%, #fef08a 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .brand-logo i {
       font-size: 1.5rem;
-      color: #818cf8;
+      color: #f59e0b;
       -webkit-text-fill-color: initial;
     }
 
@@ -223,15 +223,15 @@
     }
 
     .btn-action-primary {
-      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-      color: #ffffff;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #000000;
       border: none;
       padding: 0.75rem 1.4rem;
       border-radius: 12px;
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
       transition: all 0.25s ease;
       display: flex;
       align-items: center;
@@ -240,7 +240,7 @@
 
     .btn-action-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
+      box-shadow: 0 6px 25px rgba(245, 158, 11, 0.6);
     }
 
     .btn-action-secondary {
@@ -384,7 +384,7 @@
     .form-control:focus {
       outline: none;
       border-color: var(--accent-primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
     }
 
     textarea.form-control {
@@ -398,7 +398,7 @@
       gap: 0.75rem;
     }
 
-    /* Foil Effect & Theme Option Selectors */
+    /* Option Selectors Grid */
     .option-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -423,9 +423,9 @@
     }
 
     .option-card.selected {
-      background: rgba(99, 102, 241, 0.18);
-      border-color: #818cf8;
-      box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+      background: rgba(245, 158, 11, 0.18);
+      border-color: #f59e0b;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
     }
 
     .option-color-dot {
@@ -442,32 +442,6 @@
       color: #fff;
     }
 
-    /* Presets Quick Picker */
-    .presets-container {
-      display: flex;
-      gap: 0.5rem;
-      overflow-x: auto;
-      padding-bottom: 0.4rem;
-    }
-
-    .preset-chip {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      padding: 0.4rem 0.85rem;
-      font-size: 0.8rem;
-      white-space: nowrap;
-      color: #cbd5e1;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .preset-chip:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-
     /* File Input Styling */
     .file-upload-box {
       border: 2px dashed rgba(255, 255, 255, 0.18);
@@ -481,12 +455,12 @@
 
     .file-upload-box:hover {
       border-color: var(--accent-primary);
-      background: rgba(99, 102, 241, 0.08);
+      background: rgba(245, 158, 11, 0.08);
     }
 
     .file-upload-box i {
       font-size: 1.6rem;
-      color: #818cf8;
+      color: #f59e0b;
       margin-bottom: 0.4rem;
     }
 
@@ -499,13 +473,12 @@
     /* ==========================================================================
        3. 3D CARD PARALLAX ENGINE & HOLOGRAPHIC FOIL SHADERS
        ========================================================================== */
-    /* Card Container Aspect Ratio 63:88 (TCG standard) with Fluid Sizing & Container Query */
     .card-scene {
       width: min(84vw, 370px);
       aspect-ratio: 63 / 88;
       position: relative;
-      container-type: inline-size; /* Enables Container Query Units (cqw)! */
-      perspective: 1000px;
+      container-type: inline-size;
+      perspective: 1200px;
       user-select: none;
       touch-action: none;
     }
@@ -545,13 +518,13 @@
 
     .card-face.card-back {
       transform: rotateY(180deg);
-      background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #090a0f 100%);
+      background: radial-gradient(circle at 50% 50%, #451a03 0%, #090a0f 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
-      border: 3px solid #d97706;
+      border: 3px solid #f59e0b;
     }
 
     .card-back-pattern {
@@ -561,10 +534,10 @@
       border: 2px solid rgba(245, 158, 11, 0.4);
       background-image: 
         radial-gradient(#f59e0b 1px, transparent 1px),
-        radial-gradient(#6366f1 1px, transparent 1px);
+        radial-gradient(#06b6d4 1px, transparent 1px);
       background-size: 20px 20px;
       background-position: 0 0, 10px 10px;
-      opacity: 0.3;
+      opacity: 0.35;
     }
 
     .card-back-emblem {
@@ -578,7 +551,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
     }
 
     .card-back-emblem i {
@@ -617,7 +590,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(15, 23, 42, 0.72);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 10px;
       padding: 1.5cqw 2.5cqw;
@@ -689,7 +662,7 @@
       align-items: center;
       justify-content: center;
       font-size: 3.8cqw;
-      color: #fff;
+      color: #000;
       box-shadow: 0 0 10px var(--card-theme-glow);
     }
 
@@ -722,7 +695,7 @@
       position: absolute;
       top: 2cqw;
       right: 2cqw;
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      background: linear-gradient(135deg, #fef08a 0%, #d97706 100%);
       color: #000;
       font-size: 2.2cqw;
       font-weight: 900;
@@ -749,7 +722,7 @@
     .card-outer-frame.full-art-mode .card-body,
     .card-outer-frame.full-art-mode .card-footer,
     .card-outer-frame.full-art-mode .card-meta {
-      background: rgba(10, 14, 26, 0.72);
+      background: rgba(10, 14, 26, 0.76);
       backdrop-filter: blur(8px);
     }
 
@@ -759,7 +732,7 @@
       display: flex;
       flex-direction: column;
       gap: 1.8cqw;
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(15, 23, 42, 0.68);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 10px;
       padding: 2cqw 2.5cqw;
@@ -825,12 +798,13 @@
       align-items: center;
       justify-content: center;
       font-size: 2.5cqw;
-      color: #fff;
+      color: #000;
       box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
     }
 
     .energy-orb.generic {
       background: #64748b;
+      color: #fff;
     }
 
     .card-skill-name {
@@ -869,7 +843,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       align-items: center;
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(15, 23, 42, 0.72);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 8px;
       padding: 1cqw 1.5cqw;
@@ -960,7 +934,7 @@
 
 
     /* ==========================================================================
-       5. MULTI-LAYER HOLOGRAPHIC FOIL SHADERS (4 Distinct Modes)
+       5. MULTI-LAYER HOLOGRAPHIC FOIL SHADERS
        ========================================================================== */
     .card-foil-overlay {
       position: absolute;
@@ -1026,7 +1000,7 @@
       background-position: center, var(--pointer-x) var(--pointer-y);
     }
 
-    /* 4. Silver Phantom Shader */
+    /* 4. Silver Phantom Shader (Default User Selection) */
     .card-scene[data-foil="silver"] .card-foil-overlay {
       background-image: 
         radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 1) 0%, rgba(148, 163, 184, 0.4) 30%, transparent var(--glare-spot-size)),
@@ -1044,9 +1018,8 @@
 
 
     /* ==========================================================================
-       6. RESPONSIVE BREAKPOINTS (Mobile Bottom Sheet & Tablet Adaptability)
+       6. RESPONSIVE BREAKPOINTS (RWD Adaptability)
        ========================================================================== */
-    /* Tablet (768px - 1023px) */
     @media (max-width: 1023px) {
       .app-container {
         grid-template-columns: 1fr;
@@ -1064,7 +1037,6 @@
       }
     }
 
-    /* Mobile Devices (< 768px): Vertical Stack & Mobile Bottom Drawer Layout */
     @media (max-width: 767px) {
       header {
         padding: 1rem 1.25rem;
@@ -1125,7 +1097,7 @@
 
     <!-- LEFT STAGE: Interactive 3D Card Display Area -->
     <section class="stage-area">
-      <div class="card-scene" id="cardScene" data-foil="cosmos">
+      <div class="card-scene" id="cardScene" data-foil="silver">
         <div class="card-wrapper" id="cardWrapper">
           
           <!-- Card Front Face -->
@@ -1135,13 +1107,13 @@
               <!-- Section 1: Header -->
               <div class="card-header">
                 <div class="card-header-left">
-                  <span class="card-stage-badge" id="cardStage">STAGE 2 MASTER</span>
-                  <div class="card-name" id="cardName" contenteditable="true" title="點擊即可編輯名稱">CHUCK THE ARCHITECT</div>
+                  <span class="card-stage-badge" id="cardStage">SPECIALIST</span>
+                  <div class="card-name" id="cardName" contenteditable="true" title="點擊即可編輯名稱">查研觀攝</div>
                 </div>
                 <div class="card-header-right">
                   <div class="card-hp-badge">
                     <span class="card-hp-label">HP</span>
-                    <span class="card-hp-val" id="cardHp" contenteditable="true">240</span>
+                    <span class="card-hp-val" id="cardHp" contenteditable="true">1000</span>
                   </div>
                   <div class="card-attribute-icon" id="cardAttrIcon">
                     <i class="fa-solid fa-microchip"></i>
@@ -1149,11 +1121,10 @@
                 </div>
               </div>
 
-              <!-- Section 2: Artwork Window -->
+              <!-- Section 2: Artwork Window (Engineer Slash Photographer Visual) -->
               <div class="card-art-container">
-                <!-- SVG Avatar Placeholder default -->
-                <img id="cardArtImg" class="card-art-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><defs><linearGradient id='g1' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%234f46e5'/><stop offset='50%' stop-color='%2306b6d4'/><stop offset='100%' stop-color='%230f172a'/></linearGradient><linearGradient id='g2' x1='100%' y1='0%' x2='0%' y2='100%'><stop offset='0%' stop-color='%23f59e0b'/><stop offset='100%' stop-color='%23ec4899'/></linearGradient></defs><rect width='500' height='500' fill='url(%23g1)'/><circle cx='250' cy='200' r='110' fill='url(%23g2)' opacity='0.85'/><path d='M100 450 C 120 310, 380 310, 400 450 Z' fill='%231e293b'/><circle cx='250' cy='200' r='85' fill='%230f172a'/><path d='M210 180 Q 250 150 290 180' stroke='%2338bdf8' stroke-width='8' fill='none'/><circle cx='210' cy='195' r='10' fill='%2338bdf8'/><circle cx='290' cy='195' r='10' fill='%2338bdf8'/><path d='M220 230 Q 250 250 280 230' stroke='%23f59e0b' stroke-width='5' fill='none'/></svg>" alt="Card Artwork">
-                <div class="card-art-stamp" id="cardStamp">SAR ✦ LEGEND</div>
+                <img id="cardArtImg" class="card-art-img" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'><defs><linearGradient id='gTech' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23451a03'/><stop offset='50%' stop-color='%231e1b4b'/><stop offset='100%' stop-color='%230f172a'/></linearGradient><linearGradient id='gGold' x1='0%' y1='100%' x2='100%' y2='0%'><stop offset='0%' stop-color='%23f59e0b'/><stop offset='100%' stop-color='%2306b6d4'/></linearGradient></defs><rect width='500' height='500' fill='url(%23gTech)'/><g opacity='0.15'><path d='M0 50 H500 M0 100 H500 M0 150 H500 M0 200 H500 M0 250 H500 M0 300 H500 M0 350 H500 M0 400 H500 M0 450 H500' stroke='%23f59e0b' stroke-width='1'/><path d='M50 0 V500 M100 0 V500 M150 0 V500 M200 0 V500 M250 0 V500 M300 0 V500 M350 0 V500 M400 0 V500 M450 0 V500' stroke='%23f59e0b' stroke-width='1'/></g><circle cx='250' cy='220' r='140' stroke='url(%23gGold)' stroke-width='6' fill='none' opacity='0.8'/><circle cx='250' cy='220' r='110' stroke='%23f59e0b' stroke-width='3' stroke-dasharray='10 6' fill='none'/><circle cx='250' cy='220' r='80' fill='%230f172a' stroke='%2306b6d4' stroke-width='4'/><circle cx='250' cy='220' r='45' fill='%23f59e0b' opacity='0.85'/><path d='M100 460 C 130 330, 370 330, 400 460 Z' fill='%231e293b' stroke='%23f59e0b' stroke-width='3'/><text x='250' y='360' font-family='sans-serif' font-weight='900' font-size='22' fill='%23fef08a' text-anchor='middle' letter-spacing='3'>ENGINEER × PHOTOGRAPHER</text><text x='250' y='390' font-family='monospace' font-size='14' fill='%2338bdf8' text-anchor='middle'>&lt;/&gt; ISO 100 | RAW 8K | MULTITASKING</text></svg>" alt="Card Artwork">
+                <div class="card-art-stamp" id="cardStamp">SSR ✦ LEGEND</div>
               </div>
 
               <!-- Section 3: Body (Traits & Skills) -->
@@ -1161,11 +1132,11 @@
                 <!-- Passive Trait -->
                 <div class="card-passive-box">
                   <div class="card-passive-title">
-                    <i class="fa-solid fa-bolt-lightning"></i>
-                    <span id="cardPassiveTitle" contenteditable="true">【特性】深度專注・Hyperfocus</span>
+                    <i class="fa-solid fa-camera-rotate"></i>
+                    <span id="cardPassiveTitle" contenteditable="true">【特性】全焦段聚焦・Multi-Focus</span>
                   </div>
                   <div class="card-passive-desc" id="cardPassiveDesc" contenteditable="true">
-                    當回合進行複雜架構重構時，全體技能傷害增加 40%，且不受混亂干擾影響。
+                    切換工程架構邏輯與單眼鏡頭視角，觀察精準度提升 40%，且不受資訊過載干擾。
                   </div>
                 </div>
 
@@ -1177,12 +1148,12 @@
                         <span class="energy-orb"><i class="fa-solid fa-microchip"></i></span>
                         <span class="energy-orb generic"><i class="fa-solid fa-circle"></i></span>
                       </div>
-                      <div class="card-skill-name" id="skill1Name" contenteditable="true">【架構重構・System Refactor】</div>
+                      <div class="card-skill-name" id="skill1Name" contenteditable="true">【觀察紀錄員・Vision Recorder】</div>
                     </div>
-                    <div class="card-skill-dmg" id="skill1Dmg" contenteditable="true">120+</div>
+                    <div class="card-skill-dmg" id="skill1Dmg" contenteditable="true">180+</div>
                   </div>
                   <div class="card-skill-desc" id="skill1Desc" contenteditable="true">
-                    清理所有 legacy 代碼與冗餘邏輯。若手牌中包含「全端模組」，額外造成 50 點傷害。
+                    透過單眼焦距精準捕捉全景細節脈絡，重構結構邏輯並對目標區域造成高額衝擊。
                   </div>
                 </div>
 
@@ -1193,14 +1164,14 @@
                       <div class="card-energy-cost">
                         <span class="energy-orb"><i class="fa-solid fa-microchip"></i></span>
                         <span class="energy-orb"><i class="fa-solid fa-microchip"></i></span>
-                        <span class="energy-orb"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                        <span class="energy-orb"><i class="fa-solid fa-camera"></i></span>
                       </div>
-                      <div class="card-skill-name" id="skill2Name" contenteditable="true">【超限思維・Limitless Innovation】</div>
+                      <div class="card-skill-name" id="skill2Name" contenteditable="true">【極致應用・Ultimate Synthesis】</div>
                     </div>
-                    <div class="card-skill-dmg" id="skill2Dmg" contenteditable="true">260</div>
+                    <div class="card-skill-dmg" id="skill2Dmg" contenteditable="true">500</div>
                   </div>
                   <div class="card-skill-desc" id="skill2Desc" contenteditable="true">
-                    釋放全息 AI 多模態矩陣，對目標區域進行極速演算打擊，並獲得一額外行動回合。
+                    融合工程邏輯與極致視覺美學，發動多工多模態全息打擊，並獲得額外連擊行動回合。
                   </div>
                 </div>
               </div>
@@ -1209,26 +1180,26 @@
               <div class="card-footer">
                 <div class="footer-stat-col">
                   <span class="footer-stat-label">弱點</span>
-                  <span class="footer-stat-val" id="cardWeakness" contenteditable="true"><i class="fa-solid fa-fire" style="color:#ef4444;"></i> ×2</span>
+                  <span class="footer-stat-val" id="cardWeakness" contenteditable="true"><i class="fa-solid fa-wand-magic-sparkles" style="color:#a855f7;"></i> 精神藍 ×3</span>
                 </div>
                 <div class="footer-stat-col">
                   <span class="footer-stat-label">抗性</span>
-                  <span class="footer-stat-val" id="cardResistance" contenteditable="true"><i class="fa-solid fa-shield-halved" style="color:#3b82f6;"></i> -30</span>
+                  <span class="footer-stat-val" id="cardResistance" contenteditable="true"><i class="fa-solid fa-fire" style="color:#f43f5e;"></i> 創發紅 -100</span>
                 </div>
                 <div class="footer-stat-col">
-                  <span class="footer-stat-label">撤退成本</span>
-                  <span class="footer-stat-val" id="cardRetreat" contenteditable="true">⚪ ⚪</span>
+                  <span class="footer-stat-label">調度成本</span>
+                  <span class="footer-stat-val" id="cardRetreat" contenteditable="true">⚪⚪⚪⚪</span>
                 </div>
               </div>
 
               <!-- Section 5: Meta & Anti-counterfeiting -->
               <div class="card-meta">
                 <div class="card-meta-left">
-                  <span class="card-artist" id="cardArtist" contenteditable="true">Illus. Personal Studio</span>
-                  <span class="card-copyright">© 2026 LEGEND CARD ENGINE. All Rights Reserved.</span>
+                  <span class="card-artist" id="cardArtist" contenteditable="true">Illus. 查研觀攝 chuckphotos</span>
+                  <span class="card-copyright">© 2026 查研觀攝 chuckphotos. All Rights Reserved.</span>
                 </div>
                 <div class="card-meta-right">
-                  <span class="card-number" id="cardNumber" contenteditable="true">No. 001/001 ★★★ SAR</span>
+                  <span class="card-number" id="cardNumber" contenteditable="true">No. 001/001 ★★★ SSR</span>
                   <div class="card-1st-edition-stamp" title="1st Edition 金屬首刷認證">1st</div>
                 </div>
               </div>
@@ -1243,9 +1214,9 @@
           <div class="card-face card-back">
             <div class="card-back-pattern"></div>
             <div class="card-back-emblem">
-              <i class="fa-solid fa-cubes-stacked"></i>
+              <i class="fa-solid fa-camera-retro"></i>
             </div>
-            <div class="card-back-text">LEGENDARY TCG</div>
+            <div class="card-back-text">CHUCK PHOTOS TCG</div>
           </div>
 
         </div>
@@ -1273,7 +1244,7 @@
         <div class="panel-title">
           <i class="fa-solid fa-sliders"></i> 卡牌工坊與客製化控制
         </div>
-        <div class="panel-subtitle">即時調整屬性、全息反光模式、滿版肖像與可調參數</div>
+        <div class="panel-subtitle">查研觀攝專屬卡牌 · 即時編輯與多模態微調</div>
       </div>
 
       <!-- Tab Navigation -->
@@ -1287,9 +1258,6 @@
         <button class="tab-btn" onclick="switchTab('tab-content')">
           <i class="fa-solid fa-pen-to-square"></i> 卡面文字
         </button>
-        <button class="tab-btn" onclick="switchTab('tab-presets')">
-          <i class="fa-solid fa-address-card"></i> 傳奇範本
-        </button>
       </nav>
 
       <!-- TAB 1: STYLES & FOIL EFFECT -->
@@ -1301,7 +1269,7 @@
             <span><i class="fa-solid fa-sparkles"></i> 選擇動態鐳射全息箔膜 (Holo Foil)</span>
           </label>
           <div class="option-grid">
-            <div class="option-card selected" onclick="setFoilMode('cosmos', this)">
+            <div class="option-card" onclick="setFoilMode('cosmos', this)">
               <div class="option-color-dot" style="background: linear-gradient(135deg, #ec4899, #06b6d4, #f59e0b);"></div>
               <div class="option-title">Cosmos Holo<br><small style="color:#94a3b8;font-weight:normal;">宇宙星雲彩虹</small></div>
             </div>
@@ -1313,9 +1281,9 @@
               <div class="option-color-dot" style="background: linear-gradient(135deg, #fef08a, #d97706, #78350f);"></div>
               <div class="option-title">Gold Ultra<br><small style="color:#94a3b8;font-weight:normal;">黑金高奢浮雕</small></div>
             </div>
-            <div class="option-card" onclick="setFoilMode('silver', this)">
+            <div class="option-card selected" onclick="setFoilMode('silver', this)">
               <div class="option-color-dot" style="background: linear-gradient(135deg, #ffffff, #94a3b8, #0f172a);"></div>
-              <div class="option-title">Silver Phantom<br><small style="color:#94a3b8;font-weight:normal;">冷冽銀鏡暗光</small></div>
+              <div class="option-title">Silver Phantom<br><small style="color:#94a3b8;font-weight:normal;">冷冽銀鏡 (預設)</small></div>
             </div>
           </div>
         </div>
@@ -1327,33 +1295,25 @@
           </label>
           <div class="option-grid">
             <div class="option-card selected" onclick="setCardTheme('tech', this)">
-              <div class="option-color-dot" style="background: #6366f1;"></div>
-              <div class="option-title">⚙️ 科技 (Tech)</div>
+              <div class="option-color-dot" style="background: #f59e0b;"></div>
+              <div class="option-title">⚙️ 科技金 (預設)</div>
             </div>
             <div class="option-card" onclick="setCardTheme('spirit', this)">
               <div class="option-color-dot" style="background: #a855f7;"></div>
-              <div class="option-title">🔮 精神 (Spirit)</div>
+              <div class="option-title">🔮 精神藍</div>
             </div>
             <div class="option-card" onclick="setCardTheme('speed', this)">
               <div class="option-color-dot" style="background: #06b6d4;"></div>
-              <div class="option-title">⚡ 疾速 (Speed)</div>
+              <div class="option-title">⚡ 疾速紫</div>
             </div>
             <div class="option-card" onclick="setCardTheme('flame', this)">
               <div class="option-color-dot" style="background: #f43f5e;"></div>
-              <div class="option-title">🔥 創發 (Flame)</div>
-            </div>
-            <div class="option-card" onclick="setCardTheme('eco', this)">
-              <div class="option-color-dot" style="background: #10b981;"></div>
-              <div class="option-title">🍃 生態 (Eco)</div>
-            </div>
-            <div class="option-card" onclick="setCardTheme('secret', this)">
-              <div class="option-color-dot" style="background: #f59e0b;"></div>
-              <div class="option-title">💎 傳奇 (Legend)</div>
+              <div class="option-title">🔥 創發紅</div>
             </div>
           </div>
         </div>
 
-        <!-- Layout Mode Toggle (Standard Frame vs Full Art SAR) -->
+        <!-- Layout Mode Toggle -->
         <div class="form-group">
           <label class="form-label">
             <span><i class="fa-solid fa-image"></i> 卡面版型配置</span>
@@ -1371,23 +1331,22 @@
         <!-- Custom Image Upload -->
         <div class="form-group">
           <label class="form-label">
-            <span><i class="fa-solid fa-upload"></i> 上傳專屬個人肖像 (本地處理)</span>
+            <span><i class="fa-solid fa-upload"></i> 上傳專屬個人肖像／照片 (本地處理)</span>
           </label>
           <div class="file-upload-box" onclick="document.getElementById('imageUploader').click()">
             <i class="fa-solid fa-cloud-arrow-up"></i>
-            <div class="file-upload-text">點擊上傳或拖曳圖片至此 (PNG, JPG, WebP)</div>
+            <div class="file-upload-text">點擊上傳或拖曳個人照片至此 (PNG, JPG, WebP)</div>
             <input type="file" id="imageUploader" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
           </div>
         </div>
 
       </div>
 
-      <!-- TAB 2: FINE-TUNING PARAMETERS (可調參數面板) -->
+      <!-- TAB 2: FINE-TUNING PARAMETERS -->
       <div class="tab-content" id="tab-params">
         
-        <!-- Section: 3D Motion & Parallax -->
         <div class="form-group">
-          <label class="form-label" style="color:#818cf8; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem;">
+          <label class="form-label" style="color:#f59e0b; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem;">
             <span><i class="fa-solid fa-cube"></i> 3D 視差與動態傾角控制</span>
           </label>
         </div>
@@ -1408,7 +1367,6 @@
           <input type="range" class="form-control" min="0.2" max="2.5" step="0.1" value="1.0" oninput="updateParam('zDepth', this.value)">
         </div>
 
-        <!-- Section: Holographic Optics -->
         <div class="form-group">
           <label class="form-label" style="color:#38bdf8; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
             <span><i class="fa-solid fa-sun"></i> 全息箔膜光學控制</span>
@@ -1418,9 +1376,9 @@
         <div class="form-group">
           <label class="form-label">
             <span>全息箔膜不透明度 (Foil Opacity)</span>
-            <span id="valFoilOpacity">65%</span>
+            <span id="valFoilOpacity">70%</span>
           </label>
-          <input type="range" class="form-control" min="0" max="100" value="65" oninput="updateParam('foilOpacity', this.value)">
+          <input type="range" class="form-control" min="0" max="100" value="70" oninput="updateParam('foilOpacity', this.value)">
         </div>
 
         <div class="form-group">
@@ -1434,49 +1392,14 @@
         <div class="form-group">
           <label class="form-label">全息光學混合模式 (Foil Blend Mode)</label>
           <select class="form-control" id="selectBlendMode" onchange="updateParam('blendMode', this.value)">
-            <option value="color-dodge" selected>Color Dodge (顏色亮避 - 預設)</option>
+            <option value="hard-light" selected>Hard Light (強光箔膜 - Silver Phantom 預設)</option>
+            <option value="color-dodge">Color Dodge (顏色亮避)</option>
             <option value="overlay">Overlay (覆蓋高對比)</option>
-            <option value="hard-light">Hard Light (強光箔膜)</option>
             <option value="screen">Screen (濾色亮斑)</option>
-            <option value="soft-light">Soft Light (柔光細緻)</option>
             <option value="difference">Difference (賽博霓彩負片)</option>
           </select>
         </div>
 
-        <!-- Section: Geometry & Glow -->
-        <div class="form-group">
-          <label class="form-label" style="color:#f59e0b; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
-            <span><i class="fa-solid fa-shapes"></i> 卡牌邊框與氛圍發光</span>
-          </label>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">
-            <span>卡牌圓角半徑 (Corner Radius)</span>
-            <span id="valCornerRadius">20px</span>
-          </label>
-          <input type="range" class="form-control" min="0" max="36" value="20" oninput="updateParam('cornerRadius', this.value)">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">
-            <span>卡牌外發光擴散半徑 (Glow Blur)</span>
-            <span id="valGlowRadius">30px</span>
-          </label>
-          <input type="range" class="form-control" min="0" max="60" value="30" oninput="updateParam('glowRadius', this.value)">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">卡牌標題字型 (Title Font Family)</label>
-          <select class="form-control" id="selectTitleFont" onchange="updateParam('titleFont', this.value)">
-            <option value="'Cinzel', serif" selected>Cinzel (古典 TCG 羅馬體)</option>
-            <option value="'Outfit', sans-serif">Outfit (現代簡約無襯線)</option>
-            <option value="'Space Grotesk', monospace">Space Grotesk (極客單極極光)</option>
-            <option value="'Syne', sans-serif">Syne (未來前衛藝術體)</option>
-          </select>
-        </div>
-
-        <!-- Section: Artwork Fine-Tuning -->
         <div class="form-group">
           <label class="form-label" style="color:#34d399; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
             <span><i class="fa-solid fa-sliders"></i> 肖像插畫位置與濾鏡</span>
@@ -1519,7 +1442,7 @@
 
         <div class="form-group" style="margin-top: 0.5rem;">
           <button class="btn-action-secondary" style="width:100%; justify-content:center;" onclick="resetAllParams()">
-            <i class="fa-solid fa-rotate-left"></i> 重設所有微調參數為預設值
+            <i class="fa-solid fa-rotate-left"></i> 重設所有微調參數
           </button>
         </div>
 
@@ -1531,132 +1454,90 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">卡牌名稱</label>
-            <input type="text" class="form-control" id="inputCardName" value="CHUCK THE ARCHITECT" oninput="syncCardText('cardName', this.value)">
+            <input type="text" class="form-control" id="inputCardName" value="查研觀攝" oninput="syncCardText('cardName', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">生命數值 (HP)</label>
-            <input type="text" class="form-control" id="inputCardHp" value="240" oninput="syncCardText('cardHp', this.value)">
+            <input type="text" class="form-control" id="inputCardHp" value="1000" oninput="syncCardText('cardHp', this.value)">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">階級標記 (Stage)</label>
-            <input type="text" class="form-control" id="inputCardStage" value="STAGE 2 MASTER" oninput="syncCardText('cardStage', this.value)">
+            <input type="text" class="form-control" id="inputCardStage" value="SPECIALIST" oninput="syncCardText('cardStage', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">稀有度印記 (Stamp)</label>
-            <input type="text" class="form-control" id="inputCardStamp" value="SAR ✦ LEGEND" oninput="syncCardText('cardStamp', this.value)">
+            <input type="text" class="form-control" id="inputCardStamp" value="SSR ✦ LEGEND" oninput="syncCardText('cardStamp', this.value)">
           </div>
         </div>
 
         <!-- Passive Trait -->
         <div class="form-group">
           <label class="form-label">核心特性標題</label>
-          <input type="text" class="form-control" id="inputPassiveTitle" value="【特性】深度專注・Hyperfocus" oninput="syncCardText('cardPassiveTitle', this.value)">
+          <input type="text" class="form-control" id="inputPassiveTitle" value="【特性】全焦段聚焦・Multi-Focus" oninput="syncCardText('cardPassiveTitle', this.value)">
         </div>
         <div class="form-group">
           <label class="form-label">特性效果描述</label>
-          <textarea class="form-control" id="inputPassiveDesc" oninput="syncCardText('cardPassiveDesc', this.value)">當回合進行複雜架構重構時，全體技能傷害增加 40%，且不受混亂干擾影響。</textarea>
+          <textarea class="form-control" id="inputPassiveDesc" oninput="syncCardText('cardPassiveDesc', this.value)">切換工程架構邏輯與單眼鏡頭視角，觀察精準度提升 40%，且不受資訊過載干擾。</textarea>
         </div>
 
         <!-- Skill 1 -->
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">招式一名稱</label>
-            <input type="text" class="form-control" id="inputSkill1Name" value="【架構重構・System Refactor】" oninput="syncCardText('skill1Name', this.value)">
+            <input type="text" class="form-control" id="inputSkill1Name" value="【觀察紀錄員・Vision Recorder】" oninput="syncCardText('skill1Name', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">傷害值</label>
-            <input type="text" class="form-control" id="inputSkill1Dmg" value="120+" oninput="syncCardText('skill1Dmg', this.value)">
+            <input type="text" class="form-control" id="inputSkill1Dmg" value="180+" oninput="syncCardText('skill1Dmg', this.value)">
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">招式一敘述</label>
-          <textarea class="form-control" id="inputSkill1Desc" oninput="syncCardText('skill1Desc', this.value)">清理所有 legacy 代碼與冗餘邏輯。若手牌中包含「全端模組」，額外造成 50 點傷害。</textarea>
+          <textarea class="form-control" id="inputSkill1Desc" oninput="syncCardText('skill1Desc', this.value)">透過單眼焦距精準捕捉全景細節脈絡，重構結構邏輯並對目標區域造成高額衝擊。</textarea>
         </div>
 
         <!-- Skill 2 -->
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">奧義技能名稱</label>
-            <input type="text" class="form-control" id="inputSkill2Name" value="【超限思維・Limitless Innovation】" oninput="syncCardText('skill2Name', this.value)">
+            <input type="text" class="form-control" id="inputSkill2Name" value="【極致應用・Ultimate Synthesis】" oninput="syncCardText('skill2Name', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">傷害值</label>
-            <input type="text" class="form-control" id="inputSkill2Dmg" value="260" oninput="syncCardText('skill2Dmg', this.value)">
+            <input type="text" class="form-control" id="inputSkill2Dmg" value="500" oninput="syncCardText('skill2Dmg', this.value)">
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">奧義技能敘述</label>
-          <textarea class="form-control" id="inputSkill2Desc" oninput="syncCardText('skill2Desc', this.value)">釋放全息 AI 多模態矩陣，對目標區域進行極速演算打擊，並獲得一額外行動回合。</textarea>
+          <textarea class="form-control" id="inputSkill2Desc" oninput="syncCardText('skill2Desc', this.value)">融合工程邏輯與極致視覺美學，發動多工多模態全息打擊，並獲得額外連擊行動回合。</textarea>
         </div>
 
         <!-- Footer Stats -->
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">弱點 (Weakness)</label>
-            <input type="text" class="form-control" id="inputWeakness" value="🔥 ×2" oninput="syncCardText('cardWeakness', this.value)">
+            <input type="text" class="form-control" id="inputWeakness" value="🔮 精神藍 ×3" oninput="syncCardText('cardWeakness', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">抗性 (Resistance)</label>
-            <input type="text" class="form-control" id="inputResistance" value="🛡️ -30" oninput="syncCardText('cardResistance', this.value)">
+            <input type="text" class="form-control" id="inputResistance" value="🔥 創發紅 -100" oninput="syncCardText('cardResistance', this.value)">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">繪師署名 (Artist)</label>
-            <input type="text" class="form-control" id="inputArtist" value="Illus. Personal Studio" oninput="syncCardText('cardArtist', this.value)">
+            <input type="text" class="form-control" id="inputArtist" value="Illus. 查研觀攝 chuckphotos" oninput="syncCardText('cardArtist', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">卡牌編號 (No.)</label>
-            <input type="text" class="form-control" id="inputNumber" value="No. 001/001 ★★★ SAR" oninput="syncCardText('cardNumber', this.value)">
+            <input type="text" class="form-control" id="inputNumber" value="No. 001/001 ★★★ SSR" oninput="syncCardText('cardNumber', this.value)">
           </div>
         </div>
 
-      </div>
-
-      <!-- TAB 4: CAREER PRESETS -->
-      <div class="tab-content" id="tab-presets">
-        <div class="form-group">
-          <label class="form-label">一鍵載入經典傳奇職涯角色</label>
-          <div class="presets-container" style="flex-direction: column; gap: 0.75rem;">
-            
-            <div class="option-card" onclick="loadPreset('architect')">
-              <div class="option-color-dot" style="background: #6366f1;"></div>
-              <div style="display:flex; flex-direction:column;">
-                <div class="option-title">🏛️ 首席系統架構師 (Chief Architect)</div>
-                <small style="color:#94a3b8;">高 HP / 架構重構與全息演算技能</small>
-              </div>
-            </div>
-
-            <div class="option-card" onclick="loadPreset('ai_engineer')">
-              <div class="option-color-dot" style="background: #a855f7;"></div>
-              <div style="display:flex; flex-direction:column;">
-                <div class="option-title">🤖 AI 模型工程大師 (AI Model Pioneer)</div>
-                <small style="color:#94a3b8;">精神屬性 / 深度學習與微調爆發</small>
-              </div>
-            </div>
-
-            <div class="option-card" onclick="loadPreset('fullstack')">
-              <div class="option-color-dot" style="background: #06b6d4;"></div>
-              <div style="display:flex; flex-direction:column;">
-                <div class="option-title">⚡ 全端開發傳奇 (Full-Stack Ninja)</div>
-                <small style="color:#94a3b8;">疾速屬性 / 極速部署與零障礙除錯</small>
-              </div>
-            </div>
-
-            <div class="option-card" onclick="loadPreset('creative')">
-              <div class="option-color-dot" style="background: #f43f5e;"></div>
-              <div style="display:flex; flex-direction:column;">
-                <div class="option-title">🎨 創發 UI/UX 總監 (Creative Director)</div>
-                <small style="color:#94a3b8;">創發屬性 / 視覺震撼與流體動態</small>
-              </div>
-            </div>
-
-          </div>
-        </div>
       </div>
 
     </aside>
@@ -1683,7 +1564,6 @@
     let maxTiltAngle = 16;
     let zDepthScale = 1.0;
 
-    // Initialize Card Bounds calculation
     function updateCardBounds() {
       cardBounds = cardScene.getBoundingClientRect();
     }
@@ -1704,23 +1584,19 @@
       const px = (mouseX / cardBounds.width) * 100;
       const py = (mouseY / cardBounds.height) * 100;
 
-      // Rotate bounds based on customizable maxTiltAngle
       const rotateY = ((mouseX - cardBounds.width / 2) / (cardBounds.width / 2)) * maxTiltAngle;
       const rotateX = ((mouseY - cardBounds.height / 2) / (cardBounds.height / 2)) * -maxTiltAngle;
 
-      // Distance from center ratio (0 to 1)
       const dx = (mouseX - cardBounds.width / 2) / (cardBounds.width / 2);
       const dy = (mouseY - cardBounds.height / 2) / (cardBounds.height / 2);
       const dist = Math.min(Math.sqrt(dx * dx + dy * dy), 1);
 
-      // Apply CSS Custom Properties to Card Scene
       cardScene.style.setProperty('--pointer-x', `${px}%`);
       cardScene.style.setProperty('--pointer-y', `${py}%`);
       cardScene.style.setProperty('--card-rotate-x', `${rotateX}deg`);
       cardScene.style.setProperty('--card-rotate-y', `${rotateY}deg`);
       cardScene.style.setProperty('--pointer-from-center', dist);
 
-      // Apply 3D Transform
       cardWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
     });
 
@@ -1791,8 +1667,8 @@
     function enableGyro(btn) {
       isGyroActive = !isGyroActive;
       if (isGyroActive) {
-        btn.style.background = 'rgba(99, 102, 241, 0.4)';
-        btn.style.borderColor = '#818cf8';
+        btn.style.background = 'rgba(245, 158, 11, 0.4)';
+        btn.style.borderColor = '#f59e0b';
         window.addEventListener('deviceorientation', handleOrientation);
       } else {
         btn.style.background = 'rgba(255, 255, 255, 0.06)';
@@ -1804,8 +1680,8 @@
 
     function handleOrientation(e) {
       if (!isGyroActive) return;
-      const gamma = e.gamma || 0; // -90 to 90 (left to right tilt)
-      const beta = e.beta || 0;   // -180 to 180 (front to back tilt)
+      const gamma = e.gamma || 0;
+      const beta = e.beta || 0;
 
       const rotateY = Math.max(-maxTiltAngle * 1.2, Math.min(maxTiltAngle * 1.2, gamma * 0.6));
       const rotateX = Math.max(-maxTiltAngle * 1.2, Math.min(maxTiltAngle * 1.2, (beta - 45) * -0.5));
@@ -1822,7 +1698,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       Fine-Tuning Parameter Updates (微調參數系統)
+       Fine-Tuning Parameter Updates
        -------------------------------------------------------------------------- */
     function updateParam(paramKey, val) {
       const root = document.documentElement;
@@ -1848,17 +1724,6 @@
         case 'blendMode':
           root.style.setProperty('--foil-blend-mode', val);
           break;
-        case 'cornerRadius':
-          root.style.setProperty('--card-corner-radius', `${val}px`);
-          document.getElementById('valCornerRadius').innerText = `${val}px`;
-          break;
-        case 'glowRadius':
-          root.style.setProperty('--card-glow-radius', `${val}px`);
-          document.getElementById('valGlowRadius').innerText = `${val}px`;
-          break;
-        case 'titleFont':
-          root.style.setProperty('--font-card-title', val);
-          break;
         case 'artScale':
           root.style.setProperty('--art-scale', val / 100);
           document.getElementById('valArtScale').innerText = `${val}%`;
@@ -1881,19 +1746,15 @@
     function resetAllParams() {
       updateParam('tiltAngle', 16);
       updateParam('zDepth', 1.0);
-      updateParam('foilOpacity', 65);
+      updateParam('foilOpacity', 70);
       updateParam('glareSize', 60);
-      updateParam('blendMode', 'color-dodge');
-      updateParam('cornerRadius', 20);
-      updateParam('glowRadius', 30);
-      updateParam('titleFont', "'Cinzel', serif");
+      updateParam('blendMode', 'hard-light');
       updateParam('artScale', 100);
       updateParam('artX', 0);
       updateParam('artY', 0);
       updateParam('artBrightness', 100);
 
-      document.getElementById('selectBlendMode').value = 'color-dodge';
-      document.getElementById('selectTitleFont').value = "'Cinzel', serif";
+      document.getElementById('selectBlendMode').value = 'hard-light';
     }
 
     /* --------------------------------------------------------------------------
@@ -1907,11 +1768,11 @@
 
     const themeMap = {
       tech: {
-        primary: '#6366f1',
-        secondary: '#4f46e5',
-        glow: 'rgba(99, 102, 241, 0.5)',
+        primary: '#f59e0b',
+        secondary: '#d97706',
+        glow: 'rgba(245, 158, 11, 0.6)',
         icon: '<i class="fa-solid fa-microchip"></i>',
-        bg: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)'
+        bg: 'linear-gradient(135deg, #451a03 0%, #0f172a 100%)'
       },
       spirit: {
         primary: '#a855f7',
@@ -1933,20 +1794,6 @@
         glow: 'rgba(244, 63, 94, 0.5)',
         icon: '<i class="fa-solid fa-fire"></i>',
         bg: 'linear-gradient(135deg, #4c0519 0%, #0f172a 100%)'
-      },
-      eco: {
-        primary: '#10b981',
-        secondary: '#059669',
-        glow: 'rgba(16, 185, 129, 0.5)',
-        icon: '<i class="fa-solid fa-leaf"></i>',
-        bg: 'linear-gradient(135deg, #064e3b 0%, #0f172a 100%)'
-      },
-      secret: {
-        primary: '#f59e0b',
-        secondary: '#d97706',
-        glow: 'rgba(245, 158, 11, 0.6)',
-        icon: '<i class="fa-solid fa-crown"></i>',
-        bg: 'linear-gradient(135deg, #451a03 0%, #0f172a 100%)'
       }
     };
 
@@ -1962,7 +1809,6 @@
       document.getElementById('cardAttrIcon').innerHTML = theme.icon;
       bgGlowOrb.style.background = `radial-gradient(circle, ${theme.glow} 0%, transparent 70%)`;
 
-      // Update energy icons inside card
       document.querySelectorAll('.energy-orb:not(.generic)').forEach(orb => {
         orb.innerHTML = theme.icon;
       });
@@ -2007,7 +1853,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       Two-Way Data Sync (Input Box <-> Contenteditable Card Elements)
+       Two-Way Data Sync
        -------------------------------------------------------------------------- */
     function syncCardText(elementId, text) {
       const target = document.getElementById(elementId);
@@ -2016,7 +1862,6 @@
       }
     }
 
-    // Direct Inline Contenteditable listener -> update Form inputs
     document.querySelectorAll('[contenteditable="true"]').forEach(el => {
       el.addEventListener('input', () => {
         const id = el.id;
@@ -2058,140 +1903,22 @@
     }
 
     /* --------------------------------------------------------------------------
-       Presets Engine
-       -------------------------------------------------------------------------- */
-    const presets = {
-      architect: {
-        name: 'CHUCK THE ARCHITECT',
-        hp: '240',
-        stage: 'STAGE 2 MASTER',
-        stamp: 'SAR ✦ LEGEND',
-        passiveTitle: '【特性】深度專注・Hyperfocus',
-        passiveDesc: '當回合進行複雜架構重構時，全體技能傷害增加 40%，且不受混亂干擾影響。',
-        s1Name: '【架構重構・System Refactor】',
-        s1Dmg: '120+',
-        s1Desc: '清理所有 legacy 代碼與冗餘邏輯。若手牌中包含「全端模組」，額外造成 50 點傷害。',
-        s2Name: '【超限思維・Limitless Innovation】',
-        s2Dmg: '260',
-        s2Desc: '釋放全息 AI 多模態矩陣，對目標區域進行極速演算打擊，並獲得一額外行動回合。',
-        weakness: '🔥 ×2',
-        resistance: '🛡️ -30',
-        theme: 'tech',
-        foil: 'cosmos'
-      },
-      ai_engineer: {
-        name: 'DR. NOVA AI PIONEER',
-        hp: '220',
-        stage: 'STAGE 2 SPECIALIST',
-        stamp: 'UR ✦ NEURAL',
-        passiveTitle: '【特性】權重微調・Fine-Tuning',
-        passiveDesc: '每當對手發動策略，自動學習對手招式並獲得 30% 傷害防禦屏障。',
-        s1Name: '【潛在空間打擊・Latent Embed】',
-        s1Dmg: '110',
-        s1Desc: '將複雜資訊壓縮至高維向量，使敵方目標陷入 2 回合的困惑狀態。',
-        s2Name: '【AGI 奇點降臨・Singularity Shock】',
-        s2Dmg: '280',
-        s2Desc: '調用千億參數級別推理集群，進行無死角全覆蓋式邏輯壓制。',
-        weakness: '⚡ ×2',
-        resistance: '🔮 -40',
-        theme: 'spirit',
-        foil: 'rainbow'
-      },
-      fullstack: {
-        name: 'KAI THE NINJA CODER',
-        hp: '200',
-        stage: 'STAGE 1 EXP',
-        stamp: 'SR ✦ SPEEDSTER',
-        passiveTitle: '【特性】零秒熱重載・Hot Reload',
-        passiveDesc: '遭遇程式 Bug 時無縫線上即時修復，免除所有控制型負面狀態。',
-        s1Name: '【極速 CI/CD 部署・Pipeline Dash】',
-        s1Dmg: '90+',
-        s1Desc: '連續進行 3 次極速發布，若建置檢查全數通過，此招式無視對手防禦。',
-        s2Name: '【零停機升級・Zero Downtime】',
-        s2Dmg: '210',
-        s2Desc: '全面升級核心服務集群，恢復自身 50 點 HP 並造成高額區域衝擊。',
-        weakness: '🍃 ×2',
-        resistance: '⚡ -20',
-        theme: 'speed',
-        foil: 'silver'
-      },
-      creative: {
-        name: 'LUNA CREATIVE DIRECTOR',
-        hp: '210',
-        stage: 'ORIGIN LEGEND',
-        stamp: 'SAR ✦ ARTISAN',
-        passiveTitle: '【特性】視覺震撼・Aesthetic Wow',
-        passiveDesc: '登場時對全場施展光影特效，使所有同伴技能暴擊率提升 35%。',
-        s1Name: '【流體動態光譜・Dynamic Mesh】',
-        s1Dmg: '100',
-        s1Desc: '召喚炫彩玻璃漸層光束，將場上所有混亂氣場轉化為能量晶球。',
-        s2Name: '【極致視差風暴・Parallax Eclipse】',
-        s2Dmg: '240',
-        s2Desc: '引發全螢幕 3D 視差折射反光，造成盲目效果並給予致勝一擊。',
-        weakness: '⚙️ ×2',
-        resistance: '🔥 -30',
-        theme: 'flame',
-        foil: 'gold'
-      }
-    };
-
-    function loadPreset(key) {
-      const p = presets[key];
-      if (!p) return;
-
-      syncCardText('cardName', p.name);
-      syncCardText('cardHp', p.hp);
-      syncCardText('cardStage', p.stage);
-      syncCardText('cardStamp', p.stamp);
-      syncCardText('cardPassiveTitle', p.passiveTitle);
-      syncCardText('cardPassiveDesc', p.passiveDesc);
-      syncCardText('skill1Name', p.s1Name);
-      syncCardText('skill1Dmg', p.s1Dmg);
-      syncCardText('skill1Desc', p.s1Desc);
-      syncCardText('skill2Name', p.s2Name);
-      syncCardText('skill2Dmg', p.s2Dmg);
-      syncCardText('skill2Desc', p.s2Desc);
-      syncCardText('cardWeakness', p.weakness);
-      syncCardText('cardResistance', p.resistance);
-
-      // Sync form input fields
-      document.getElementById('inputCardName').value = p.name;
-      document.getElementById('inputCardHp').value = p.hp;
-      document.getElementById('inputCardStage').value = p.stage;
-      document.getElementById('inputCardStamp').value = p.stamp;
-      document.getElementById('inputPassiveTitle').value = p.passiveTitle;
-      document.getElementById('inputPassiveDesc').value = p.passiveDesc;
-      document.getElementById('inputSkill1Name').value = p.s1Name;
-      document.getElementById('inputSkill1Dmg').value = p.s1Dmg;
-      document.getElementById('inputSkill1Desc').value = p.s1Desc;
-      document.getElementById('inputSkill2Name').value = p.s2Name;
-      document.getElementById('inputSkill2Dmg').value = p.s2Dmg;
-      document.getElementById('inputSkill2Desc').value = p.s2Desc;
-
-      setCardTheme(p.theme);
-      setFoilMode(p.foil);
-    }
-
-    /* --------------------------------------------------------------------------
        High-Res PNG Export (html2canvas)
        -------------------------------------------------------------------------- */
     function exportCardPNG() {
-      // Temporarily flatten 3D rotation for accurate canvas rendering
       const currentTransform = cardWrapper.style.transform;
       cardWrapper.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
 
       const cardFront = document.querySelector('.card-front');
 
       html2canvas(cardFront, {
-        scale: 3, // High DPI capture for crisp export
+        scale: 3,
         useCORS: true,
         allowTaint: true,
         backgroundColor: null
       }).then(canvas => {
-        // Restore 3D angle
         cardWrapper.style.transform = currentTransform;
 
-        // Trigger Download
         const link = document.createElement('a');
         const fileName = (document.getElementById('cardName').innerText.trim() || 'legend_card').toLowerCase().replace(/\s+/g, '_');
         link.download = `${fileName}_3d_foil_card.png`;
