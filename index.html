@@ -9,7 +9,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -44,10 +44,24 @@
       --card-frame-color: #312e81;
       --card-border-gold: linear-gradient(135deg, #fef08a 0%, #d97706 50%, #78350f 100%);
 
-      /* Typography */
+      /* Typography & Customizable Font */
       --font-card-title: 'Cinzel', serif;
       --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'Space Grotesk', monospace;
+
+      /* Dynamic Parametric Controls (Fine-Tuning System) */
+      --max-tilt-angle: 16; /* degrees limit */
+      --z-depth-scale: 1; /* z-depth depth multiplier */
+      --glare-spot-size: 60%;
+      --foil-blend-mode: color-dodge;
+      --card-corner-radius: 20px;
+      --card-glow-radius: 30px;
+      
+      --art-scale: 1;
+      --art-offset-x: 0px;
+      --art-offset-y: 0px;
+      --art-brightness: 100%;
+      --art-contrast: 100%;
 
       /* Foil Shader Dynamic Offsets */
       --pointer-x: 50%;
@@ -119,7 +133,7 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      font-family: var(--font-card-title);
+      font-family: 'Cinzel', serif;
       font-weight: 900;
       font-size: 1.35rem;
       letter-spacing: 1px;
@@ -169,7 +183,7 @@
       max-width: 1400px;
       flex: 1;
       display: grid;
-      grid-template-columns: 1fr 440px;
+      grid-template-columns: 1fr 460px;
       gap: 2.5rem;
       padding: 1rem 2rem 3rem 2rem;
       z-index: 10;
@@ -218,7 +232,7 @@
       font-weight: 600;
       cursor: pointer;
       box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-      transition: all 0.25 ease;
+      transition: all 0.25s ease;
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -300,16 +314,17 @@
       background: rgba(0, 0, 0, 0.3);
       padding: 0.3rem;
       border-radius: 12px;
-      gap: 0.3rem;
+      gap: 0.25rem;
+      overflow-x: auto;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 0.55rem 0.5rem;
+      padding: 0.55rem 0.45rem;
       border: none;
       background: transparent;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
       border-radius: 8px;
       cursor: pointer;
@@ -317,7 +332,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
+      white-space: nowrap;
     }
 
     .tab-btn.active {
@@ -351,6 +367,7 @@
       color: #cbd5e1;
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
 
     .form-control {
@@ -499,10 +516,10 @@
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1);
-      border-radius: 20px;
+      border-radius: var(--card-corner-radius);
       box-shadow: 
         0 25px 50px -12px rgba(0, 0, 0, 0.7),
-        0 0 30px var(--card-theme-glow);
+        0 0 var(--card-glow-radius) var(--card-theme-glow);
     }
 
     .card-wrapper.flipping {
@@ -517,7 +534,7 @@
     .card-face {
       position: absolute;
       inset: 0;
-      border-radius: 20px;
+      border-radius: var(--card-corner-radius);
       backface-visibility: hidden;
       overflow: hidden;
       background: var(--card-bg-gradient);
@@ -540,7 +557,7 @@
     .card-back-pattern {
       position: absolute;
       inset: 12px;
-      border-radius: 12px;
+      border-radius: calc(var(--card-corner-radius) - 8px);
       border: 2px solid rgba(245, 158, 11, 0.4);
       background-image: 
         radial-gradient(#f59e0b 1px, transparent 1px),
@@ -587,7 +604,7 @@
     .card-outer-frame {
       position: absolute;
       inset: 0;
-      border-radius: 20px;
+      border-radius: var(--card-corner-radius);
       padding: 3.5cqw;
       display: flex;
       flex-direction: column;
@@ -604,9 +621,10 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 10px;
       padding: 1.5cqw 2.5cqw;
-      transform: translateZ(28px);
+      transform: translateZ(calc(28px * var(--z-depth-scale)));
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       z-index: 4;
+      transition: transform 0.2s ease;
     }
 
     .card-header-left {
@@ -685,8 +703,9 @@
       overflow: hidden;
       border: 2px solid rgba(255, 255, 255, 0.25);
       box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 6px 15px rgba(0, 0, 0, 0.4);
-      transform: translateZ(15px);
+      transform: translateZ(calc(15px * var(--z-depth-scale)));
       z-index: 2;
+      transition: transform 0.2s ease;
     }
 
     .card-art-img {
@@ -694,7 +713,9 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
-      transition: transform 0.3s ease;
+      transform: scale(var(--art-scale)) translate(var(--art-offset-x), var(--art-offset-y));
+      filter: brightness(var(--art-brightness)) contrast(var(--art-contrast));
+      transition: transform 0.2s ease, filter 0.2s ease;
     }
 
     .card-art-stamp {
@@ -710,7 +731,7 @@
       letter-spacing: 1px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.6);
-      transform: translateZ(25px);
+      transform: translateZ(calc(25px * var(--z-depth-scale)));
     }
 
     /* SAR / Full Art Mode Override */
@@ -719,7 +740,7 @@
       inset: 0;
       height: 100%;
       margin: 0;
-      border-radius: 18px;
+      border-radius: calc(var(--card-corner-radius) - 2px);
       border: none;
       z-index: 1;
     }
@@ -742,9 +763,10 @@
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 10px;
       padding: 2cqw 2.5cqw;
-      transform: translateZ(22px);
+      transform: translateZ(calc(22px * var(--z-depth-scale)));
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       z-index: 3;
+      transition: transform 0.2s ease;
     }
 
     /* Passive Trait */
@@ -852,8 +874,9 @@
       border-radius: 8px;
       padding: 1cqw 1.5cqw;
       margin-top: 1.5cqw;
-      transform: translateZ(24px);
+      transform: translateZ(calc(24px * var(--z-depth-scale)));
       z-index: 3;
+      transition: transform 0.2s ease;
     }
 
     .footer-stat-col {
@@ -887,8 +910,9 @@
       margin-top: 1.2cqw;
       font-size: 1.9cqw;
       color: #94a3b8;
-      transform: translateZ(30px);
+      transform: translateZ(calc(30px * var(--z-depth-scale)));
       z-index: 4;
+      transition: transform 0.2s ease;
     }
 
     .card-meta-left {
@@ -941,19 +965,19 @@
     .card-foil-overlay {
       position: absolute;
       inset: 0;
-      border-radius: 20px;
+      border-radius: var(--card-corner-radius);
       pointer-events: none;
       z-index: 10;
-      transform: translateZ(35px);
-      mix-blend-mode: color-dodge;
+      transform: translateZ(calc(35px * var(--z-depth-scale)));
+      mix-blend-mode: var(--foil-blend-mode);
       opacity: var(--foil-opacity);
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, mix-blend-mode 0.3s ease, transform 0.2s ease;
     }
 
     /* 1. Cosmos Holo Shader */
     .card-scene[data-foil="cosmos"] .card-foil-overlay {
       background-image: 
-        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.1) 25%, transparent 60%),
+        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.1) calc(var(--glare-spot-size) * 0.4), transparent var(--glare-spot-size)),
         repeating-linear-gradient(
           calc(var(--card-rotate-y) * 4 + 45deg),
           rgba(255, 0, 128, 0.4) 0%,
@@ -971,7 +995,7 @@
     /* 2. Rainbow Secret Shader */
     .card-scene[data-foil="rainbow"] .card-foil-overlay {
       background-image: 
-        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.95) 0%, transparent 45%),
+        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.95) 0%, transparent var(--glare-spot-size)),
         repeating-linear-gradient(
           calc(var(--card-rotate-x) * 5 + 90deg),
           rgba(239, 68, 68, 0.5) 0%,
@@ -988,9 +1012,8 @@
 
     /* 3. Gold Ultra Embossed Shader */
     .card-scene[data-foil="gold"] .card-foil-overlay {
-      mix-blend-mode: overlay;
       background-image: 
-        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(254, 240, 138, 0.9) 0%, rgba(217, 119, 6, 0.3) 35%, transparent 70%),
+        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(254, 240, 138, 0.9) 0%, rgba(217, 119, 6, 0.3) 35%, transparent var(--glare-spot-size)),
         linear-gradient(
           calc(var(--card-rotate-y) * 6 + 135deg),
           rgba(120, 53, 15, 0.6) 0%,
@@ -1005,9 +1028,8 @@
 
     /* 4. Silver Phantom Shader */
     .card-scene[data-foil="silver"] .card-foil-overlay {
-      mix-blend-mode: hard-light;
       background-image: 
-        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 1) 0%, rgba(148, 163, 184, 0.4) 30%, transparent 65%),
+        radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 1) 0%, rgba(148, 163, 184, 0.4) 30%, transparent var(--glare-spot-size)),
         repeating-linear-gradient(
           calc(var(--card-rotate-x) * 3 + 30deg),
           rgba(15, 23, 42, 0.7) 0%,
@@ -1251,7 +1273,7 @@
         <div class="panel-title">
           <i class="fa-solid fa-sliders"></i> 卡牌工坊與客製化控制
         </div>
-        <div class="panel-subtitle">即時調整屬性、全息反光模式、滿版肖像與快速範本</div>
+        <div class="panel-subtitle">即時調整屬性、全息反光模式、滿版肖像與可調參數</div>
       </div>
 
       <!-- Tab Navigation -->
@@ -1259,11 +1281,14 @@
         <button class="tab-btn active" onclick="switchTab('tab-style')">
           <i class="fa-solid fa-wand-magic-sparkles"></i> 樣式與反光
         </button>
+        <button class="tab-btn" onclick="switchTab('tab-params')">
+          <i class="fa-solid fa-sliders"></i> 🎛️ 微調參數
+        </button>
         <button class="tab-btn" onclick="switchTab('tab-content')">
           <i class="fa-solid fa-pen-to-square"></i> 卡面文字
         </button>
         <button class="tab-btn" onclick="switchTab('tab-presets')">
-          <i class="fa-solid fa-address-card"></i> 傳奇職涯範本
+          <i class="fa-solid fa-address-card"></i> 傳奇範本
         </button>
       </nav>
 
@@ -1355,18 +1380,152 @@
           </div>
         </div>
 
-        <!-- Foil Intensity Slider -->
+      </div>
+
+      <!-- TAB 2: FINE-TUNING PARAMETERS (可調參數面板) -->
+      <div class="tab-content" id="tab-params">
+        
+        <!-- Section: 3D Motion & Parallax -->
+        <div class="form-group">
+          <label class="form-label" style="color:#818cf8; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem;">
+            <span><i class="fa-solid fa-cube"></i> 3D 視差與動態傾角控制</span>
+          </label>
+        </div>
+
         <div class="form-group">
           <label class="form-label">
-            <span>全息箔膜強度 (Foil Opacity)</span>
-            <span id="foilOpacityVal">65%</span>
+            <span>最大傾斜角度 (Max Tilt Angle)</span>
+            <span id="valTiltAngle">16°</span>
           </label>
-          <input type="range" class="form-control" min="0" max="100" value="65" oninput="adjustFoilOpacity(this.value)">
+          <input type="range" class="form-control" min="5" max="35" value="16" oninput="updateParam('tiltAngle', this.value)">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>3D 圖層立體深度倍率 (Z-Depth Multiplier)</span>
+            <span id="valZDepth">1.0x</span>
+          </label>
+          <input type="range" class="form-control" min="0.2" max="2.5" step="0.1" value="1.0" oninput="updateParam('zDepth', this.value)">
+        </div>
+
+        <!-- Section: Holographic Optics -->
+        <div class="form-group">
+          <label class="form-label" style="color:#38bdf8; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
+            <span><i class="fa-solid fa-sun"></i> 全息箔膜光學控制</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>全息箔膜不透明度 (Foil Opacity)</span>
+            <span id="valFoilOpacity">65%</span>
+          </label>
+          <input type="range" class="form-control" min="0" max="100" value="65" oninput="updateParam('foilOpacity', this.value)">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>高光光斑聚焦範圍 (Glare Spot Size)</span>
+            <span id="valGlareSize">60%</span>
+          </label>
+          <input type="range" class="form-control" min="20" max="100" value="60" oninput="updateParam('glareSize', this.value)">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">全息光學混合模式 (Foil Blend Mode)</label>
+          <select class="form-control" id="selectBlendMode" onchange="updateParam('blendMode', this.value)">
+            <option value="color-dodge" selected>Color Dodge (顏色亮避 - 預設)</option>
+            <option value="overlay">Overlay (覆蓋高對比)</option>
+            <option value="hard-light">Hard Light (強光箔膜)</option>
+            <option value="screen">Screen (濾色亮斑)</option>
+            <option value="soft-light">Soft Light (柔光細緻)</option>
+            <option value="difference">Difference (賽博霓彩負片)</option>
+          </select>
+        </div>
+
+        <!-- Section: Geometry & Glow -->
+        <div class="form-group">
+          <label class="form-label" style="color:#f59e0b; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
+            <span><i class="fa-solid fa-shapes"></i> 卡牌邊框與氛圍發光</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>卡牌圓角半徑 (Corner Radius)</span>
+            <span id="valCornerRadius">20px</span>
+          </label>
+          <input type="range" class="form-control" min="0" max="36" value="20" oninput="updateParam('cornerRadius', this.value)">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <span>卡牌外發光擴散半徑 (Glow Blur)</span>
+            <span id="valGlowRadius">30px</span>
+          </label>
+          <input type="range" class="form-control" min="0" max="60" value="30" oninput="updateParam('glowRadius', this.value)">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">卡牌標題字型 (Title Font Family)</label>
+          <select class="form-control" id="selectTitleFont" onchange="updateParam('titleFont', this.value)">
+            <option value="'Cinzel', serif" selected>Cinzel (古典 TCG 羅馬體)</option>
+            <option value="'Outfit', sans-serif">Outfit (現代簡約無襯線)</option>
+            <option value="'Space Grotesk', monospace">Space Grotesk (極客單極極光)</option>
+            <option value="'Syne', sans-serif">Syne (未來前衛藝術體)</option>
+          </select>
+        </div>
+
+        <!-- Section: Artwork Fine-Tuning -->
+        <div class="form-group">
+          <label class="form-label" style="color:#34d399; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
+            <span><i class="fa-solid fa-sliders"></i> 肖像插畫位置與濾鏡</span>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <span>插畫縮放</span>
+              <span id="valArtScale">100%</span>
+            </label>
+            <input type="range" class="form-control" min="80" max="200" value="100" oninput="updateParam('artScale', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              <span>插畫 X 軸位移</span>
+              <span id="valArtX">0px</span>
+            </label>
+            <input type="range" class="form-control" min="-50" max="50" value="0" oninput="updateParam('artX', this.value)">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">
+              <span>插畫 Y 軸位移</span>
+              <span id="valArtY">0px</span>
+            </label>
+            <input type="range" class="form-control" min="-50" max="50" value="0" oninput="updateParam('artY', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              <span>插畫亮度</span>
+              <span id="valArtBrightness">100%</span>
+            </label>
+            <input type="range" class="form-control" min="50" max="150" value="100" oninput="updateParam('artBrightness', this.value)">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 0.5rem;">
+          <button class="btn-action-secondary" style="width:100%; justify-content:center;" onclick="resetAllParams()">
+            <i class="fa-solid fa-rotate-left"></i> 重設所有微調參數為預設值
+          </button>
         </div>
 
       </div>
 
-      <!-- TAB 2: CONTENT EDITING -->
+      <!-- TAB 3: CONTENT EDITING -->
       <div class="tab-content" id="tab-content">
         
         <div class="form-row">
@@ -1458,7 +1617,7 @@
 
       </div>
 
-      <!-- TAB 3: CAREER PRESETS -->
+      <!-- TAB 4: CAREER PRESETS -->
       <div class="tab-content" id="tab-presets">
         <div class="form-group">
           <label class="form-label">一鍵載入經典傳奇職涯角色</label>
@@ -1520,6 +1679,10 @@
     let isGyroActive = false;
     let cardBounds = null;
 
+    // Dynamic Fine-Tuning State
+    let maxTiltAngle = 16;
+    let zDepthScale = 1.0;
+
     // Initialize Card Bounds calculation
     function updateCardBounds() {
       cardBounds = cardScene.getBoundingClientRect();
@@ -1541,9 +1704,9 @@
       const px = (mouseX / cardBounds.width) * 100;
       const py = (mouseY / cardBounds.height) * 100;
 
-      // Rotate bounds: -16 deg to +16 deg
-      const rotateY = ((mouseX - cardBounds.width / 2) / (cardBounds.width / 2)) * 16;
-      const rotateX = ((mouseY - cardBounds.height / 2) / (cardBounds.height / 2)) * -16;
+      // Rotate bounds based on customizable maxTiltAngle
+      const rotateY = ((mouseX - cardBounds.width / 2) / (cardBounds.width / 2)) * maxTiltAngle;
+      const rotateX = ((mouseY - cardBounds.height / 2) / (cardBounds.height / 2)) * -maxTiltAngle;
 
       // Distance from center ratio (0 to 1)
       const dx = (mouseX - cardBounds.width / 2) / (cardBounds.width / 2);
@@ -1589,8 +1752,8 @@
         const px = Math.max(0, Math.min(100, (mouseX / cardBounds.width) * 100));
         const py = Math.max(0, Math.min(100, (mouseY / cardBounds.height) * 100));
 
-        const rotateY = ((mouseX - cardBounds.width / 2) / (cardBounds.width / 2)) * 18;
-        const rotateX = ((mouseY - cardBounds.height / 2) / (cardBounds.height / 2)) * -18;
+        const rotateY = ((mouseX - cardBounds.width / 2) / (cardBounds.width / 2)) * maxTiltAngle;
+        const rotateX = ((mouseY - cardBounds.height / 2) / (cardBounds.height / 2)) * -maxTiltAngle;
 
         cardScene.style.setProperty('--pointer-x', `${px}%`);
         cardScene.style.setProperty('--pointer-y', `${py}%`);
@@ -1644,11 +1807,11 @@
       const gamma = e.gamma || 0; // -90 to 90 (left to right tilt)
       const beta = e.beta || 0;   // -180 to 180 (front to back tilt)
 
-      const rotateY = Math.max(-20, Math.min(20, gamma * 0.6));
-      const rotateX = Math.max(-20, Math.min(20, (beta - 45) * -0.5));
+      const rotateY = Math.max(-maxTiltAngle * 1.2, Math.min(maxTiltAngle * 1.2, gamma * 0.6));
+      const rotateX = Math.max(-maxTiltAngle * 1.2, Math.min(maxTiltAngle * 1.2, (beta - 45) * -0.5));
 
-      const px = 50 + (rotateY / 20) * 40;
-      const py = 50 + (rotateX / 20) * 40;
+      const px = 50 + (rotateY / maxTiltAngle) * 40;
+      const py = 50 + (rotateX / maxTiltAngle) * 40;
 
       cardScene.style.setProperty('--pointer-x', `${px}%`);
       cardScene.style.setProperty('--pointer-y', `${py}%`);
@@ -1656,6 +1819,81 @@
       cardScene.style.setProperty('--card-rotate-y', `${rotateY}deg`);
 
       cardWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+
+    /* --------------------------------------------------------------------------
+       Fine-Tuning Parameter Updates (微調參數系統)
+       -------------------------------------------------------------------------- */
+    function updateParam(paramKey, val) {
+      const root = document.documentElement;
+
+      switch(paramKey) {
+        case 'tiltAngle':
+          maxTiltAngle = parseFloat(val);
+          document.getElementById('valTiltAngle').innerText = `${val}°`;
+          break;
+        case 'zDepth':
+          zDepthScale = parseFloat(val);
+          root.style.setProperty('--z-depth-scale', val);
+          document.getElementById('valZDepth').innerText = `${val}x`;
+          break;
+        case 'foilOpacity':
+          root.style.setProperty('--foil-opacity', val / 100);
+          document.getElementById('valFoilOpacity').innerText = `${val}%`;
+          break;
+        case 'glareSize':
+          root.style.setProperty('--glare-spot-size', `${val}%`);
+          document.getElementById('valGlareSize').innerText = `${val}%`;
+          break;
+        case 'blendMode':
+          root.style.setProperty('--foil-blend-mode', val);
+          break;
+        case 'cornerRadius':
+          root.style.setProperty('--card-corner-radius', `${val}px`);
+          document.getElementById('valCornerRadius').innerText = `${val}px`;
+          break;
+        case 'glowRadius':
+          root.style.setProperty('--card-glow-radius', `${val}px`);
+          document.getElementById('valGlowRadius').innerText = `${val}px`;
+          break;
+        case 'titleFont':
+          root.style.setProperty('--font-card-title', val);
+          break;
+        case 'artScale':
+          root.style.setProperty('--art-scale', val / 100);
+          document.getElementById('valArtScale').innerText = `${val}%`;
+          break;
+        case 'artX':
+          root.style.setProperty('--art-offset-x', `${val}px`);
+          document.getElementById('valArtX').innerText = `${val}px`;
+          break;
+        case 'artY':
+          root.style.setProperty('--art-offset-y', `${val}px`);
+          document.getElementById('valArtY').innerText = `${val}px`;
+          break;
+        case 'artBrightness':
+          root.style.setProperty('--art-brightness', `${val}%`);
+          document.getElementById('valArtBrightness').innerText = `${val}%`;
+          break;
+      }
+    }
+
+    function resetAllParams() {
+      updateParam('tiltAngle', 16);
+      updateParam('zDepth', 1.0);
+      updateParam('foilOpacity', 65);
+      updateParam('glareSize', 60);
+      updateParam('blendMode', 'color-dodge');
+      updateParam('cornerRadius', 20);
+      updateParam('glowRadius', 30);
+      updateParam('titleFont', "'Cinzel', serif");
+      updateParam('artScale', 100);
+      updateParam('artX', 0);
+      updateParam('artY', 0);
+      updateParam('artBrightness', 100);
+
+      document.getElementById('selectBlendMode').value = 'color-dodge';
+      document.getElementById('selectTitleFont').value = "'Cinzel', serif";
     }
 
     /* --------------------------------------------------------------------------
@@ -1741,11 +1979,6 @@
       }
       document.querySelectorAll('#tab-style .option-grid:nth-of-type(3) .option-card').forEach(el => el.classList.remove('selected'));
       if (element) element.classList.add('selected');
-    }
-
-    function adjustFoilOpacity(val) {
-      document.documentElement.style.setProperty('--foil-opacity', val / 100);
-      document.getElementById('foilOpacityVal').innerText = `${val}%`;
     }
 
     /* --------------------------------------------------------------------------
