@@ -1259,7 +1259,7 @@
                 <div class="card-header-right">
                   <div class="card-hp-badge">
                     <span class="card-hp-label">HP</span>
-                    <span class="card-hp-val" id="cardHp" contenteditable="true">1000</span>
+                    <span class="card-hp-val" id="cardHp" contenteditable="true">1220</span>
                   </div>
                   <div class="card-attribute-icon" id="cardAttrIcon">
                     <i class="fa-solid fa-microchip"></i>
@@ -1515,16 +1515,16 @@
             <span>最大傾斜角度 (Max Tilt Angle)</span>
             <span id="valTiltAngle">30°</span>
           </label>
-          <input type="range" class="form-control" min="5" max="35" value="16"
+          <input type="range" class="form-control" min="5" max="50" value="30"
             oninput="updateParam('tiltAngle', this.value)">
         </div>
 
         <div class="form-group">
           <label class="form-label">
             <span>3D 圖層立體深度倍率 (Z-Depth Multiplier)</span>
-            <span id="valZDepth">0.2x</span>
+            <span id="valZDepth">0.15x</span>
           </label>
-          <input type="range" class="form-control" min="0.2" max="2.5" step="0.1" value="1.0"
+          <input type="range" class="form-control" min="0.1" max="1" step="0.05" value="0.15"
             oninput="updateParam('zDepth', this.value)">
         </div>
 
@@ -1556,9 +1556,9 @@
         <div class="form-group">
           <label class="form-label">全息光學混合模式 (Foil Blend Mode)</label>
           <select class="form-control" id="selectBlendMode" onchange="updateParam('blendMode', this.value)">
-            <option value="hard-light" selected>Hard Light (強光箔膜 - Silver Phantom 預設)</option>
+            <option value="hard-light">Hard Light (強光箔膜)</option>
             <option value="color-dodge">Color Dodge (顏色亮避)</option>
-            <option value="overlay">Overlay (覆蓋高對比)</option>
+            <option value="overlay" selected>Overlay (覆蓋高對比)</option>
             <option value="screen">Screen (濾色亮斑)</option>
             <option value="difference">Difference (賽博霓彩負片)</option>
           </select>
@@ -2048,7 +2048,7 @@
       updateParam('artBrightness', 100);
 
       const elBlend = document.getElementById('selectBlendMode');
-      if (elBlend) elBlend.value = 'hard-light';
+      if (elBlend) elBlend.value = 'overlay';
     }
 
     /* --------------------------------------------------------------------------
