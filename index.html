@@ -1836,25 +1836,27 @@
 
     // Smooth 60fps animation loop using Exponential Damping Filter
     function updateCardTransformLoop() {
-      if (!isGyroActive || isFlipping) return;
+      if (!isGyroActive) return;
 
-      currentRotateX += (targetRotateX - currentRotateX) * 0.16;
-      currentRotateY += (targetRotateY - currentRotateY) * 0.16;
+      if (!isFlipping) {
+        currentRotateX += (targetRotateX - currentRotateX) * 0.16;
+        currentRotateY += (targetRotateY - currentRotateY) * 0.16;
 
-      const px = Math.max(15, Math.min(85, 50 + (currentRotateY / maxTiltAngle) * 32));
-      const py = Math.max(15, Math.min(85, 50 + (-currentRotateX / maxTiltAngle) * 32));
+        const px = Math.max(15, Math.min(85, 50 + (currentRotateY / maxTiltAngle) * 32));
+        const py = Math.max(15, Math.min(85, 50 + (-currentRotateX / maxTiltAngle) * 32));
 
-      const dist = Math.min(Math.sqrt((currentRotateX / maxTiltAngle)**2 + (currentRotateY / maxTiltAngle)**2), 1);
+        const dist = Math.min(Math.sqrt((currentRotateX / maxTiltAngle)**2 + (currentRotateY / maxTiltAngle)**2), 1);
 
-      if (cardScene) {
-        cardScene.style.setProperty('--pointer-x', `${px.toFixed(1)}%`);
-        cardScene.style.setProperty('--pointer-y', `${py.toFixed(1)}%`);
-        cardScene.style.setProperty('--card-rotate-x', `${currentRotateX.toFixed(2)}deg`);
-        cardScene.style.setProperty('--card-rotate-y', `${currentRotateY.toFixed(2)}deg`);
-        cardScene.style.setProperty('--pointer-from-center', dist.toFixed(2));
+        if (cardScene) {
+          cardScene.style.setProperty('--pointer-x', `${px.toFixed(1)}%`);
+          cardScene.style.setProperty('--pointer-y', `${py.toFixed(1)}%`);
+          cardScene.style.setProperty('--card-rotate-x', `${currentRotateX.toFixed(2)}deg`);
+          cardScene.style.setProperty('--card-rotate-y', `${currentRotateY.toFixed(2)}deg`);
+          cardScene.style.setProperty('--pointer-from-center', dist.toFixed(2));
+        }
+
+        applyCardTransform(currentRotateX, currentRotateY, 1.02);
       }
-
-      applyCardTransform(currentRotateX, currentRotateY, 1.02);
 
       animFrameId = requestAnimationFrame(updateCardTransformLoop);
     }
