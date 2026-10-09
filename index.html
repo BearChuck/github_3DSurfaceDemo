@@ -496,11 +496,7 @@
     }
 
     .card-wrapper.flipping {
-      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .card-wrapper.is-flipped {
-      transform: rotateY(180deg) !important;
+      transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
     }
 
     /* Front & Back Faces */
@@ -509,11 +505,17 @@
       inset: 0;
       border-radius: var(--card-corner-radius);
       backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
       overflow: hidden;
       background: var(--card-bg-gradient);
       border: 2px solid rgba(255, 255, 255, 0.15);
       display: flex;
       flex-direction: column;
+      transform-style: preserve-3d;
+    }
+
+    .card-face.card-front {
+      transform: rotateY(0deg);
     }
 
     .card-face.card-back {
@@ -1563,9 +1565,10 @@
     let isGyroActive = false;
     let cardBounds = null;
 
-    // Dynamic Fine-Tuning State
+    // Dynamic Fine-Tuning & Flip State
     let maxTiltAngle = 16;
     let zDepthScale = 1.0;
+    let isCardFlipped = false;
 
     function updateCardBounds() {
       cardBounds = cardScene.getBoundingClientRect();
@@ -1573,6 +1576,19 @@
     window.addEventListener('resize', updateCardBounds);
     window.addEventListener('scroll', updateCardBounds);
     updateCardBounds();
+
+    /* Helper: Unified 3D Card Transform & Flip Engine */
+    function applyCardTransform(rx, ry, scale = 1.02) {
+      const baseAngleY = isCardFlipped ? 180 : 0;
+      const finalY = baseAngleY + ry;
+
+      cardWrapper.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${finalY.toFixed(2)}deg) scale3d(${scale}, ${scale}, ${scale})`;
+
+      // Hide foil overlay on card back face to prevent rear glare artifact
+      if (foilOverlay) {
+        foilOverlay.style.opacity = isCardFlipped ? '0' : 'var(--foil-opacity)';
+      }
+    }
 
     /* --------------------------------------------------------------------------
        3D Mouse Move Parallax Calculation
@@ -1600,7 +1616,7 @@
       cardScene.style.setProperty('--card-rotate-y', `${rotateY}deg`);
       cardScene.style.setProperty('--pointer-from-center', dist);
 
-      cardWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03, 1.03, 1.03)`;
+      applyCardTransform(rotateX, rotateY, 1.03);
     });
 
     cardScene.addEventListener('mouseleave', () => {
@@ -1614,7 +1630,7 @@
       cardScene.style.setProperty('--card-rotate-x', `0deg`);
       cardScene.style.setProperty('--card-rotate-y', `0deg`);
       cardScene.style.setProperty('--pointer-from-center', '0');
-      cardWrapper.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      applyCardTransform(0, 0, 1.0);
     }
 
     /* --------------------------------------------------------------------------
@@ -1639,7 +1655,7 @@
         cardScene.style.setProperty('--card-rotate-x', `${rotateX}deg`);
         cardScene.style.setProperty('--card-rotate-y', `${rotateY}deg`);
 
-        cardWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        applyCardTransform(rotateX, rotateY, 1.02);
       }
     }, { passive: true });
 
@@ -1665,15 +1681,12 @@
     function updateCardTransformLoop() {
       if (!isGyroActive) return;
 
-      // Exponential Low-Pass Filter (0.16 smoothing factor for fluid motion)
       currentRotateX += (targetRotateX - currentRotateX) * 0.16;
       currentRotateY += (targetRotateY - currentRotateY) * 0.16;
 
-      // Clamped spotlight glare positioning (safely bounded between 15% and 85%)
       const px = Math.max(15, Math.min(85, 50 + (currentRotateY / maxTiltAngle) * 32));
       const py = Math.max(15, Math.min(85, 50 + (-currentRotateX / maxTiltAngle) * 32));
 
-      // Distance ratio for depth shadow
       const dist = Math.min(Math.sqrt((currentRotateX / maxTiltAngle)**2 + (currentRotateY / maxTiltAngle)**2), 1);
 
       cardScene.style.setProperty('--pointer-x', `${px}%`);
@@ -1682,7 +1695,7 @@
       cardScene.style.setProperty('--card-rotate-y', `${currentRotateY.toFixed(2)}deg`);
       cardScene.style.setProperty('--pointer-from-center', dist.toFixed(2));
 
-      cardWrapper.style.transform = `rotateX(${currentRotateX.toFixed(2)}deg) rotateY(${currentRotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+      applyCardTransform(currentRotateX, currentRotateY, 1.02);
 
       animFrameId = requestAnimationFrame(updateCardTransformLoop);
     }
@@ -1913,8 +1926,11 @@
        Card Flip Animation
        -------------------------------------------------------------------------- */
     function flipCard() {
+      isCardFlipped = !isCardFlipped;
       cardWrapper.classList.add('flipping');
-      cardWrapper.classList.toggle('is-flipped');
+      
+      applyCardTransform(0, 0, 1.0);
+
       setTimeout(() => {
         cardWrapper.classList.remove('flipping');
       }, 800);
