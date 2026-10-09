@@ -1258,13 +1258,13 @@
 
       <!-- Tab Navigation -->
       <nav class="panel-tabs">
-        <button class="tab-btn active" onclick="switchTab('tab-style')">
+        <button class="tab-btn active" onclick="switchTab('tab-style', this)">
           <i class="fa-solid fa-wand-magic-sparkles"></i> 樣式與反光
         </button>
-        <button class="tab-btn" onclick="switchTab('tab-params')">
+        <button class="tab-btn" onclick="switchTab('tab-params', this)">
           <i class="fa-solid fa-sliders"></i> 🎛️ 微調參數
         </button>
-        <button class="tab-btn" onclick="switchTab('tab-content')">
+        <button class="tab-btn" onclick="switchTab('tab-content', this)">
           <i class="fa-solid fa-pen-to-square"></i> 卡面文字
         </button>
       </nav>
@@ -1277,7 +1277,7 @@
           <label class="form-label">
             <span><i class="fa-solid fa-sparkles"></i> 選擇動態鐳射全息箔膜 (Holo Foil)</span>
           </label>
-          <div class="option-grid">
+          <div class="option-grid" id="foilGrid">
             <div class="option-card" onclick="setFoilMode('cosmos', this)">
               <div class="option-color-dot" style="background: linear-gradient(135deg, #ec4899, #06b6d4, #f59e0b);"></div>
               <div class="option-title">Cosmos Holo<br><small style="color:#94a3b8;font-weight:normal;">宇宙星雲彩虹</small></div>
@@ -1302,7 +1302,7 @@
           <label class="form-label">
             <span><i class="fa-solid fa-fire-flame-curved"></i> 核心屬性主題色系</span>
           </label>
-          <div class="option-grid">
+          <div class="option-grid" id="themeGrid">
             <div class="option-card selected" onclick="setCardTheme('tech', this)">
               <div class="option-color-dot" style="background: #f59e0b;"></div>
               <div class="option-title">⚙️ 科技金 (預設)</div>
@@ -1327,7 +1327,7 @@
           <label class="form-label">
             <span><i class="fa-solid fa-image"></i> 卡面版型配置</span>
           </label>
-          <div class="option-grid">
+          <div class="option-grid" id="frameGrid">
             <div class="option-card selected" onclick="setFrameMode(false, this)">
               <div class="option-title"><i class="fa-solid fa-border-all"></i> 經典框格版型</div>
             </div>
@@ -1584,7 +1584,7 @@
     /* Helper: Unified 3D Card Transform & Flip Engine */
     function applyCardTransform(rx, ry, scale = 1.02) {
       const baseAngleY = isCardFlipped ? 180 : 0;
-      const finalY = baseAngleY + ry;
+      const finalY = baseAngleY + (isCardFlipped ? -ry : ry);
 
       cardWrapper.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${finalY.toFixed(2)}deg) scale3d(${scale}, ${scale}, ${scale})`;
 
@@ -1670,7 +1670,6 @@
     /* --------------------------------------------------------------------------
        Gyroscope Calibration, Low-Pass Damping & Motion Engine
        -------------------------------------------------------------------------- */
-    let isGyroActive = false;
     let hasGyroCalibrated = false;
     let baseBeta = 0;
     let baseGamma = 0;
@@ -1847,7 +1846,7 @@
        -------------------------------------------------------------------------- */
     function setFoilMode(mode, element) {
       cardScene.setAttribute('data-foil', mode);
-      document.querySelectorAll('#tab-style .option-grid:nth-of-type(1) .option-card').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('#foilGrid .option-card').forEach(el => el.classList.remove('selected'));
       if (element) element.classList.add('selected');
     }
 
@@ -1898,7 +1897,7 @@
         orb.innerHTML = theme.icon;
       });
 
-      document.querySelectorAll('#tab-style .option-grid:nth-of-type(2) .option-card').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('#themeGrid .option-card').forEach(el => el.classList.remove('selected'));
       if (element) element.classList.add('selected');
     }
 
@@ -1908,7 +1907,7 @@
       } else {
         cardOuterFrame.classList.remove('full-art-mode');
       }
-      document.querySelectorAll('#tab-style .option-grid:nth-of-type(3) .option-card').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('#frameGrid .option-card').forEach(el => el.classList.remove('selected'));
       if (element) element.classList.add('selected');
     }
 
@@ -1982,12 +1981,17 @@
     /* --------------------------------------------------------------------------
        Tab Navigation System
        -------------------------------------------------------------------------- */
-    function switchTab(tabId) {
+    function switchTab(tabId, btnElement) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-      event.currentTarget.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
+      if (btnElement) {
+        btnElement.classList.add('active');
+      }
+      const targetTab = document.getElementById(tabId);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
     }
 
     /* --------------------------------------------------------------------------
@@ -1997,9 +2001,9 @@
       const currentTransform = cardWrapper.style.transform;
       cardWrapper.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
 
-      const cardFront = document.querySelector('.card-front');
+      const targetFace = isCardFlipped ? document.querySelector('.card-back') : document.querySelector('.card-front');
 
-      html2canvas(cardFront, {
+      html2canvas(targetFace, {
         scale: 3,
         useCORS: true,
         allowTaint: true,
@@ -2008,8 +2012,10 @@
         cardWrapper.style.transform = currentTransform;
 
         const link = document.createElement('a');
-        const fileName = (document.getElementById('cardName').innerText.trim() || 'legend_card').toLowerCase().replace(/\s+/g, '_');
-        link.download = `${fileName}_3d_foil_card.png`;
+        const cardNameText = document.getElementById('cardName').innerText.trim() || 'legend_card';
+        const fileName = cardNameText.toLowerCase().replace(/\s+/g, '_');
+        const faceSuffix = isCardFlipped ? '_back' : '_front';
+        link.download = `${fileName}${faceSuffix}_3d_foil_card.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
       }).catch(err => {
