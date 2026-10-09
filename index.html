@@ -482,8 +482,6 @@
       -webkit-perspective: 1200px;
       user-select: none;
       touch-action: none;
-      transform: translateZ(0); /* Hardware GPU Acceleration layer */
-      -webkit-transform: translateZ(0);
     }
 
     .card-wrapper {
@@ -516,19 +514,16 @@
       flex-direction: column;
       transform-style: preserve-3d;
       -webkit-transform-style: preserve-3d;
-      will-change: transform, opacity;
-      transition: opacity 0.3s ease;
     }
 
     .card-face.card-front {
-      transform: rotateY(0deg) translateZ(1px);
-      -webkit-transform: rotateY(0deg) translateZ(1px);
-      z-index: 2;
+      transform: rotateY(0deg);
+      -webkit-transform: rotateY(0deg);
     }
 
     .card-face.card-back {
-      transform: rotateY(180deg) translateZ(1px);
-      -webkit-transform: rotateY(180deg) translateZ(1px);
+      transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
       background: radial-gradient(circle at 50% 50%, #451a03 0%, #090a0f 100%);
       display: flex;
       flex-direction: column;
@@ -536,20 +531,6 @@
       justify-content: center;
       padding: 2rem;
       border: 3px solid #f59e0b;
-      z-index: 1;
-    }
-
-    /* Mobile WebKit Safari Hardened Flip Mode Rules */
-    .card-wrapper.is-flipped-mode .card-front {
-      visibility: hidden !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .card-wrapper:not(.is-flipped-mode) .card-back {
-      visibility: hidden !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
     }
 
     .card-back-pattern {
@@ -1951,9 +1932,6 @@
     function flipCard() {
       isCardFlipped = !isCardFlipped;
       cardWrapper.classList.add('flipping');
-      
-      // Sync Mobile WebKit Safari explicit face visibility mode
-      cardWrapper.classList.toggle('is-flipped-mode', isCardFlipped);
 
       applyCardTransform(0, 0, 1.0);
 
