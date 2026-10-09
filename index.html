@@ -484,6 +484,12 @@
       touch-action: none;
     }
 
+    [contenteditable="true"] {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+      cursor: text;
+    }
+
     .card-wrapper {
       width: 100%;
       height: 100%;
@@ -1569,20 +1575,30 @@
     let isGyroActive = false;
     let cardBounds = null;
 
-    // Dynamic Fine-Tuning & Flip State
+    // Dynamic Fine-Tuning, Flip & Interaction State
     let maxTiltAngle = 16;
     let zDepthScale = 1.0;
     let isCardFlipped = false;
+    let isFlipping = false;
 
     function updateCardBounds() {
-      cardBounds = cardScene.getBoundingClientRect();
+      if (cardScene) {
+        const bounds = cardScene.getBoundingClientRect();
+        if (bounds.width > 0 && bounds.height > 0) {
+          cardBounds = bounds;
+        }
+      }
     }
     window.addEventListener('resize', updateCardBounds);
     window.addEventListener('scroll', updateCardBounds);
+    window.addEventListener('load', updateCardBounds);
+    document.addEventListener('DOMContentLoaded', updateCardBounds);
     updateCardBounds();
 
     /* Helper: Unified 3D Card Transform & Flip Engine */
     function applyCardTransform(rx, ry, scale = 1.02) {
+      if (isNaN(rx) || isNaN(ry) || !cardWrapper) return;
+
       const baseAngleY = isCardFlipped ? 180 : 0;
       const finalY = baseAngleY + (isCardFlipped ? -ry : ry);
 
@@ -1597,56 +1613,14 @@
     /* --------------------------------------------------------------------------
        3D Mouse Move Parallax Calculation
        -------------------------------------------------------------------------- */
-    cardScene.addEventListener('mousemove', (e) => {
-      if (isGyroActive) return;
-      if (!cardBounds) updateCardBounds();
+    if (cardScene) {
+      cardScene.addEventListener('mousemove', (e) => {
+        if (isGyroActive || isFlipping) return;
+        if (!cardBounds || cardBounds.width === 0) updateCardBounds();
+        if (!cardBounds || cardBounds.width === 0) return;
 
-      const mouseX = e.clientX - cardBounds.left;
-      const mouseY = e.clientY - cardBounds.top;
-
-      const px = (mouseX / cardBounds.width) * 100;
-      const py = (mouseY / cardBounds.height) * 100;
-
-      const rotateY = ((mouseX - cardBounds.width / 2) / (cardBounds.width / 2)) * maxTiltAngle;
-      const rotateX = ((mouseY - cardBounds.height / 2) / (cardBounds.height / 2)) * -maxTiltAngle;
-
-      const dx = (mouseX - cardBounds.width / 2) / (cardBounds.width / 2);
-      const dy = (mouseY - cardBounds.height / 2) / (cardBounds.height / 2);
-      const dist = Math.min(Math.sqrt(dx * dx + dy * dy), 1);
-
-      cardScene.style.setProperty('--pointer-x', `${px}%`);
-      cardScene.style.setProperty('--pointer-y', `${py}%`);
-      cardScene.style.setProperty('--card-rotate-x', `${rotateX}deg`);
-      cardScene.style.setProperty('--card-rotate-y', `${rotateY}deg`);
-      cardScene.style.setProperty('--pointer-from-center', dist);
-
-      applyCardTransform(rotateX, rotateY, 1.03);
-    });
-
-    cardScene.addEventListener('mouseleave', () => {
-      if (isGyroActive) return;
-      resetCardView();
-    });
-
-    function resetCardView() {
-      cardScene.style.setProperty('--pointer-x', `50%`);
-      cardScene.style.setProperty('--pointer-y', `50%`);
-      cardScene.style.setProperty('--card-rotate-x', `0deg`);
-      cardScene.style.setProperty('--card-rotate-y', `0deg`);
-      cardScene.style.setProperty('--pointer-from-center', '0');
-      applyCardTransform(0, 0, 1.0);
-    }
-
-    /* --------------------------------------------------------------------------
-       Mobile Touch & Gyroscope Support (DeviceOrientation)
-       -------------------------------------------------------------------------- */
-    cardScene.addEventListener('touchmove', (e) => {
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        if (!cardBounds) updateCardBounds();
-
-        const mouseX = touch.clientX - cardBounds.left;
-        const mouseY = touch.clientY - cardBounds.top;
+        const mouseX = e.clientX - cardBounds.left;
+        const mouseY = e.clientY - cardBounds.top;
 
         const px = Math.max(0, Math.min(100, (mouseX / cardBounds.width) * 100));
         const py = Math.max(0, Math.min(100, (mouseY / cardBounds.height) * 100));
@@ -1654,18 +1628,67 @@
         const rotateY = ((mouseX - cardBounds.width / 2) / (cardBounds.width / 2)) * maxTiltAngle;
         const rotateX = ((mouseY - cardBounds.height / 2) / (cardBounds.height / 2)) * -maxTiltAngle;
 
-        cardScene.style.setProperty('--pointer-x', `${px}%`);
-        cardScene.style.setProperty('--pointer-y', `${py}%`);
-        cardScene.style.setProperty('--card-rotate-x', `${rotateX}deg`);
-        cardScene.style.setProperty('--card-rotate-y', `${rotateY}deg`);
+        const dx = (mouseX - cardBounds.width / 2) / (cardBounds.width / 2);
+        const dy = (mouseY - cardBounds.height / 2) / (cardBounds.height / 2);
+        const dist = Math.min(Math.sqrt(dx * dx + dy * dy), 1);
 
-        applyCardTransform(rotateX, rotateY, 1.02);
+        cardScene.style.setProperty('--pointer-x', `${px.toFixed(1)}%`);
+        cardScene.style.setProperty('--pointer-y', `${py.toFixed(1)}%`);
+        cardScene.style.setProperty('--card-rotate-x', `${rotateX.toFixed(2)}deg`);
+        cardScene.style.setProperty('--card-rotate-y', `${rotateY.toFixed(2)}deg`);
+        cardScene.style.setProperty('--pointer-from-center', dist.toFixed(2));
+
+        applyCardTransform(rotateX, rotateY, 1.03);
+      });
+
+      cardScene.addEventListener('mouseleave', () => {
+        if (isGyroActive || isFlipping) return;
+        resetCardView();
+      });
+
+      /* --------------------------------------------------------------------------
+         Mobile Touch & Gyroscope Support (DeviceOrientation)
+         -------------------------------------------------------------------------- */
+      cardScene.addEventListener('touchmove', (e) => {
+        if (isGyroActive || isFlipping) return;
+        if (e.touches.length > 0) {
+          const touch = e.touches[0];
+          if (!cardBounds || cardBounds.width === 0) updateCardBounds();
+          if (!cardBounds || cardBounds.width === 0) return;
+
+          const mouseX = touch.clientX - cardBounds.left;
+          const mouseY = touch.clientY - cardBounds.top;
+
+          const px = Math.max(0, Math.min(100, (mouseX / cardBounds.width) * 100));
+          const py = Math.max(0, Math.min(100, (mouseY / cardBounds.height) * 100));
+
+          const rotateY = ((mouseX - cardBounds.width / 2) / (cardBounds.width / 2)) * maxTiltAngle;
+          const rotateX = ((mouseY - cardBounds.height / 2) / (cardBounds.height / 2)) * -maxTiltAngle;
+
+          cardScene.style.setProperty('--pointer-x', `${px.toFixed(1)}%`);
+          cardScene.style.setProperty('--pointer-y', `${py.toFixed(1)}%`);
+          cardScene.style.setProperty('--card-rotate-x', `${rotateX.toFixed(2)}deg`);
+          cardScene.style.setProperty('--card-rotate-y', `${rotateY.toFixed(2)}deg`);
+
+          applyCardTransform(rotateX, rotateY, 1.02);
+        }
+      }, { passive: true });
+
+      cardScene.addEventListener('touchend', () => {
+        if (!isFlipping) resetCardView();
+      });
+    }
+
+    function resetCardView() {
+      if (cardScene) {
+        cardScene.style.setProperty('--pointer-x', `50%`);
+        cardScene.style.setProperty('--pointer-y', `50%`);
+        cardScene.style.setProperty('--card-rotate-x', `0deg`);
+        cardScene.style.setProperty('--card-rotate-y', `0deg`);
+        cardScene.style.setProperty('--pointer-from-center', '0');
       }
-    }, { passive: true });
-
-    cardScene.addEventListener('touchend', () => {
-      resetCardView();
-    });
+      applyCardTransform(0, 0, 1.0);
+    }
 
     /* --------------------------------------------------------------------------
        Gyroscope Calibration, Low-Pass Damping & Motion Engine
@@ -1682,7 +1705,7 @@
 
     // Smooth 60fps animation loop using Exponential Damping Filter
     function updateCardTransformLoop() {
-      if (!isGyroActive) return;
+      if (!isGyroActive || isFlipping) return;
 
       currentRotateX += (targetRotateX - currentRotateX) * 0.16;
       currentRotateY += (targetRotateY - currentRotateY) * 0.16;
@@ -1692,11 +1715,13 @@
 
       const dist = Math.min(Math.sqrt((currentRotateX / maxTiltAngle)**2 + (currentRotateY / maxTiltAngle)**2), 1);
 
-      cardScene.style.setProperty('--pointer-x', `${px}%`);
-      cardScene.style.setProperty('--pointer-y', `${py}%`);
-      cardScene.style.setProperty('--card-rotate-x', `${currentRotateX.toFixed(2)}deg`);
-      cardScene.style.setProperty('--card-rotate-y', `${currentRotateY.toFixed(2)}deg`);
-      cardScene.style.setProperty('--pointer-from-center', dist.toFixed(2));
+      if (cardScene) {
+        cardScene.style.setProperty('--pointer-x', `${px.toFixed(1)}%`);
+        cardScene.style.setProperty('--pointer-y', `${py.toFixed(1)}%`);
+        cardScene.style.setProperty('--card-rotate-x', `${currentRotateX.toFixed(2)}deg`);
+        cardScene.style.setProperty('--card-rotate-y', `${currentRotateY.toFixed(2)}deg`);
+        cardScene.style.setProperty('--pointer-from-center', dist.toFixed(2));
+      }
 
       applyCardTransform(currentRotateX, currentRotateY, 1.02);
 
@@ -1729,17 +1754,21 @@
       hasGyroCalibrated = false;
 
       if (isGyroActive) {
-        btn.style.background = 'rgba(245, 158, 11, 0.4)';
-        btn.style.borderColor = '#f59e0b';
-        btn.innerHTML = '<i class="fa-solid fa-mobile-screen"></i> 陀螺儀 (開啟)';
+        if (btn) {
+          btn.style.background = 'rgba(245, 158, 11, 0.4)';
+          btn.style.borderColor = '#f59e0b';
+          btn.innerHTML = '<i class="fa-solid fa-mobile-screen"></i> 陀螺儀 (開啟)';
+        }
         if (btnCalibrate) btnCalibrate.style.display = 'inline-flex';
 
         window.addEventListener('deviceorientation', handleOrientation);
         animFrameId = requestAnimationFrame(updateCardTransformLoop);
       } else {
-        btn.style.background = 'rgba(255, 255, 255, 0.06)';
-        btn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-        btn.innerHTML = '<i class="fa-solid fa-mobile-screen"></i> 陀螺儀感應';
+        if (btn) {
+          btn.style.background = 'rgba(255, 255, 255, 0.06)';
+          btn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+          btn.innerHTML = '<i class="fa-solid fa-mobile-screen"></i> 陀螺儀感應';
+        }
         if (btnCalibrate) btnCalibrate.style.display = 'none';
 
         window.removeEventListener('deviceorientation', handleOrientation);
@@ -1757,7 +1786,7 @@
     }
 
     function handleOrientation(e) {
-      if (!isGyroActive) return;
+      if (!isGyroActive || isFlipping) return;
       const beta = e.beta || 0;   // -180 to 180 (pitch)
       const gamma = e.gamma || 0; // -90 to 90 (roll)
 
@@ -1790,39 +1819,47 @@
       switch(paramKey) {
         case 'tiltAngle':
           maxTiltAngle = parseFloat(val);
-          document.getElementById('valTiltAngle').innerText = `${val}°`;
+          const elTilt = document.getElementById('valTiltAngle');
+          if (elTilt) elTilt.innerText = `${val}°`;
           break;
         case 'zDepth':
           zDepthScale = parseFloat(val);
           root.style.setProperty('--z-depth-scale', val);
-          document.getElementById('valZDepth').innerText = `${val}x`;
+          const elZ = document.getElementById('valZDepth');
+          if (elZ) elZ.innerText = `${val}x`;
           break;
         case 'foilOpacity':
           root.style.setProperty('--foil-opacity', val / 100);
-          document.getElementById('valFoilOpacity').innerText = `${val}%`;
+          const elFoil = document.getElementById('valFoilOpacity');
+          if (elFoil) elFoil.innerText = `${val}%`;
           break;
         case 'glareSize':
           root.style.setProperty('--glare-spot-size', `${val}%`);
-          document.getElementById('valGlareSize').innerText = `${val}%`;
+          const elGlare = document.getElementById('valGlareSize');
+          if (elGlare) elGlare.innerText = `${val}%`;
           break;
         case 'blendMode':
           root.style.setProperty('--foil-blend-mode', val);
           break;
         case 'artScale':
           root.style.setProperty('--art-scale', val / 100);
-          document.getElementById('valArtScale').innerText = `${val}%`;
+          const elScale = document.getElementById('valArtScale');
+          if (elScale) elScale.innerText = `${val}%`;
           break;
         case 'artX':
           root.style.setProperty('--art-offset-x', `${val}px`);
-          document.getElementById('valArtX').innerText = `${val}px`;
+          const elX = document.getElementById('valArtX');
+          if (elX) elX.innerText = `${val}px`;
           break;
         case 'artY':
           root.style.setProperty('--art-offset-y', `${val}px`);
-          document.getElementById('valArtY').innerText = `${val}px`;
+          const elY = document.getElementById('valArtY');
+          if (elY) elY.innerText = `${val}px`;
           break;
         case 'artBrightness':
           root.style.setProperty('--art-brightness', `${val}%`);
-          document.getElementById('valArtBrightness').innerText = `${val}%`;
+          const elBright = document.getElementById('valArtBrightness');
+          if (elBright) elBright.innerText = `${val}%`;
           break;
       }
     }
@@ -1838,14 +1875,15 @@
       updateParam('artY', 0);
       updateParam('artBrightness', 100);
 
-      document.getElementById('selectBlendMode').value = 'hard-light';
+      const elBlend = document.getElementById('selectBlendMode');
+      if (elBlend) elBlend.value = 'hard-light';
     }
 
     /* --------------------------------------------------------------------------
        Foil Shader Mode & Theme Switching
        -------------------------------------------------------------------------- */
     function setFoilMode(mode, element) {
-      cardScene.setAttribute('data-foil', mode);
+      if (cardScene) cardScene.setAttribute('data-foil', mode);
       document.querySelectorAll('#foilGrid .option-card').forEach(el => el.classList.remove('selected'));
       if (element) element.classList.add('selected');
     }
@@ -1890,8 +1928,9 @@
       document.documentElement.style.setProperty('--card-theme-glow', theme.glow);
       document.documentElement.style.setProperty('--card-bg-gradient', theme.bg);
 
-      document.getElementById('cardAttrIcon').innerHTML = theme.icon;
-      bgGlowOrb.style.background = `radial-gradient(circle, ${theme.glow} 0%, transparent 70%)`;
+      const elIcon = document.getElementById('cardAttrIcon');
+      if (elIcon) elIcon.innerHTML = theme.icon;
+      if (bgGlowOrb) bgGlowOrb.style.background = `radial-gradient(circle, ${theme.glow} 0%, transparent 70%)`;
 
       document.querySelectorAll('.energy-orb:not(.generic)').forEach(orb => {
         orb.innerHTML = theme.icon;
@@ -1902,10 +1941,12 @@
     }
 
     function setFrameMode(isFullArt, element) {
-      if (isFullArt) {
-        cardOuterFrame.classList.add('full-art-mode');
-      } else {
-        cardOuterFrame.classList.remove('full-art-mode');
+      if (cardOuterFrame) {
+        if (isFullArt) {
+          cardOuterFrame.classList.add('full-art-mode');
+        } else {
+          cardOuterFrame.classList.remove('full-art-mode');
+        }
       }
       document.querySelectorAll('#frameGrid .option-card').forEach(el => el.classList.remove('selected'));
       if (element) element.classList.add('selected');
@@ -1915,11 +1956,12 @@
        Image Upload (FileReader API)
        -------------------------------------------------------------------------- */
     function handleImageUpload(e) {
-      const file = e.target.files[0];
+      const file = e.target.files && e.target.files[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = function(evt) {
-          document.getElementById('cardArtImg').src = evt.target.result;
+          const imgEl = document.getElementById('cardArtImg');
+          if (imgEl) imgEl.src = evt.target.result;
         };
         reader.readAsDataURL(file);
       }
@@ -1929,13 +1971,17 @@
        Card Flip Animation
        -------------------------------------------------------------------------- */
     function flipCard() {
+      if (isFlipping) return;
+      isFlipping = true;
       isCardFlipped = !isCardFlipped;
-      cardWrapper.classList.add('flipping');
+
+      if (cardWrapper) cardWrapper.classList.add('flipping');
 
       applyCardTransform(0, 0, 1.0);
 
       setTimeout(() => {
-        cardWrapper.classList.remove('flipping');
+        if (cardWrapper) cardWrapper.classList.remove('flipping');
+        isFlipping = false;
       }, 800);
     }
 
@@ -1985,12 +2031,15 @@
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-      if (btnElement) {
-        btnElement.classList.add('active');
-      }
       const targetTab = document.getElementById(tabId);
       if (targetTab) {
         targetTab.classList.add('active');
+      }
+
+      if (btnElement && btnElement.classList) {
+        btnElement.classList.add('active');
+      } else if (window.event && window.event.currentTarget) {
+        window.event.currentTarget.classList.add('active');
       }
     }
 
@@ -1998,10 +2047,17 @@
        High-Res PNG Export (html2canvas)
        -------------------------------------------------------------------------- */
     function exportCardPNG() {
+      if (!cardWrapper) return;
       const currentTransform = cardWrapper.style.transform;
       cardWrapper.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
 
       const targetFace = isCardFlipped ? document.querySelector('.card-back') : document.querySelector('.card-front');
+
+      if (!targetFace || typeof html2canvas === 'undefined') {
+        alert('匯出模組載入中，請稍後再試。');
+        cardWrapper.style.transform = currentTransform;
+        return;
+      }
 
       html2canvas(targetFace, {
         scale: 3,
@@ -2012,8 +2068,9 @@
         cardWrapper.style.transform = currentTransform;
 
         const link = document.createElement('a');
-        const cardNameText = document.getElementById('cardName').innerText.trim() || 'legend_card';
-        const fileName = cardNameText.toLowerCase().replace(/\s+/g, '_');
+        const cardNameEl = document.getElementById('cardName');
+        const cardNameText = cardNameEl ? cardNameEl.innerText.trim() : 'legend_card';
+        const fileName = (cardNameText || 'legend_card').toLowerCase().replace(/\s+/g, '_');
         const faceSuffix = isCardFlipped ? '_back' : '_front';
         link.download = `${fileName}${faceSuffix}_3d_foil_card.png`;
         link.href = canvas.toDataURL('image/png');
