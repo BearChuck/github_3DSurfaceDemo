@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -9,7 +10,9 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Syne:wght@700;800&display=swap"
+    rel="stylesheet">
 
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -28,7 +31,7 @@
       --panel-bg: rgba(18, 22, 36, 0.78);
       --panel-border: rgba(255, 255, 255, 0.14);
       --panel-glow: rgba(245, 158, 11, 0.2);
-      
+
       --accent-primary: #f59e0b;
       --accent-gold: #fbbf24;
       --accent-cyan: #06b6d4;
@@ -50,13 +53,16 @@
       --font-mono: 'Space Grotesk', monospace;
 
       /* Dynamic Parametric Controls (Fine-Tuning System) */
-      --max-tilt-angle: 16; /* degrees limit */
-      --z-depth-scale: 1; /* z-depth multiplier */
+      --max-tilt-angle: 16;
+      /* degrees limit */
+      --z-depth-scale: 1;
+      /* z-depth multiplier */
       --glare-spot-size: 60%;
-      --foil-blend-mode: hard-light; /* Default Silver Phantom optimal blend mode */
+      --foil-blend-mode: hard-light;
+      /* Default Silver Phantom optimal blend mode */
       --card-corner-radius: 20px;
       --card-glow-radius: 35px;
-      
+
       --art-scale: 1;
       --art-offset-x: 0px;
       --art-offset-y: 0px;
@@ -95,7 +101,7 @@
     .bg-grid {
       position: fixed;
       inset: 0;
-      background-image: 
+      background-image:
         linear-gradient(to right, rgba(245, 158, 11, 0.04) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(245, 158, 11, 0.04) 1px, transparent 1px);
       background-size: 40px 40px;
@@ -498,7 +504,7 @@
       -webkit-transform-style: preserve-3d;
       transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1);
       border-radius: var(--card-corner-radius);
-      box-shadow: 
+      box-shadow:
         0 25px 50px -12px rgba(0, 0, 0, 0.7),
         0 0 var(--card-glow-radius) var(--card-theme-glow);
     }
@@ -544,7 +550,7 @@
       inset: 12px;
       border-radius: calc(var(--card-corner-radius) - 8px);
       border: 2px solid rgba(245, 158, 11, 0.4);
-      background-image: 
+      background-image:
         radial-gradient(#f59e0b 1px, transparent 1px),
         radial-gradient(#06b6d4 1px, transparent 1px);
       background-size: 20px 20px;
@@ -962,17 +968,15 @@
 
     /* 1. Cosmos Holo Shader */
     .card-scene[data-foil="cosmos"] .card-foil-overlay {
-      background-image: 
+      background-image:
         radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.1) calc(var(--glare-spot-size) * 0.4), transparent var(--glare-spot-size)),
-        repeating-linear-gradient(
-          calc(var(--card-rotate-y) * 4 + 45deg),
+        repeating-linear-gradient(calc(var(--card-rotate-y) * 4 + 45deg),
           rgba(255, 0, 128, 0.4) 0%,
           rgba(0, 255, 255, 0.4) 20%,
           rgba(255, 255, 0, 0.4) 40%,
           rgba(0, 255, 128, 0.4) 60%,
           rgba(128, 0, 255, 0.4) 80%,
-          rgba(255, 0, 128, 0.4) 100%
-        ),
+          rgba(255, 0, 128, 0.4) 100%),
         radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 1px, transparent 2px);
       background-size: 100% 100%, 200% 200%, 16px 16px;
       background-position: center, calc(var(--pointer-x) * 0.5) calc(var(--pointer-y) * 0.5), 0 0;
@@ -980,50 +984,44 @@
 
     /* 2. Rainbow Secret Shader */
     .card-scene[data-foil="rainbow"] .card-foil-overlay {
-      background-image: 
+      background-image:
         radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.95) 0%, transparent var(--glare-spot-size)),
-        repeating-linear-gradient(
-          calc(var(--card-rotate-x) * 5 + 90deg),
+        repeating-linear-gradient(calc(var(--card-rotate-x) * 5 + 90deg),
           rgba(239, 68, 68, 0.5) 0%,
           rgba(245, 158, 11, 0.5) 15%,
           rgba(16, 185, 129, 0.5) 30%,
           rgba(6, 182, 212, 0.5) 45%,
           rgba(99, 102, 241, 0.5) 60%,
           rgba(217, 70, 239, 0.5) 75%,
-          rgba(239, 68, 68, 0.5) 100%
-        );
+          rgba(239, 68, 68, 0.5) 100%);
       background-size: 100% 100%, 300% 300%;
       background-position: center, calc(var(--pointer-x) * 1.2) 0;
     }
 
     /* 3. Gold Ultra Embossed Shader */
     .card-scene[data-foil="gold"] .card-foil-overlay {
-      background-image: 
+      background-image:
         radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(254, 240, 138, 0.9) 0%, rgba(217, 119, 6, 0.3) 35%, transparent var(--glare-spot-size)),
-        linear-gradient(
-          calc(var(--card-rotate-y) * 6 + 135deg),
+        linear-gradient(calc(var(--card-rotate-y) * 6 + 135deg),
           rgba(120, 53, 15, 0.6) 0%,
           rgba(245, 158, 11, 0.8) 30%,
           rgba(254, 240, 138, 1) 50%,
           rgba(245, 158, 11, 0.8) 70%,
-          rgba(120, 53, 15, 0.6) 100%
-        );
+          rgba(120, 53, 15, 0.6) 100%);
       background-size: 100% 100%, 200% 200%;
       background-position: center, var(--pointer-x) var(--pointer-y);
     }
 
     /* 4. Silver Phantom Shader (Default User Selection) */
     .card-scene[data-foil="silver"] .card-foil-overlay {
-      background-image: 
+      background-image:
         radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 1) 0%, rgba(148, 163, 184, 0.4) 30%, transparent var(--glare-spot-size)),
-        repeating-linear-gradient(
-          calc(var(--card-rotate-x) * 3 + 30deg),
+        repeating-linear-gradient(calc(var(--card-rotate-x) * 3 + 30deg),
           rgba(15, 23, 42, 0.7) 0%,
           rgba(226, 232, 240, 0.9) 25%,
           rgba(51, 65, 85, 0.7) 50%,
           rgba(248, 250, 252, 0.9) 75%,
-          rgba(15, 23, 42, 0.7) 100%
-        );
+          rgba(15, 23, 42, 0.7) 100%);
       background-size: 100% 100%, 250% 250%;
       background-position: center, calc(var(--pointer-x) * 0.8) calc(var(--pointer-y) * 0.8);
     }
@@ -1075,7 +1073,7 @@
       will-change: transform;
     }
 
-    .card-wrapper.flipping .card-outer-frame > * {
+    .card-wrapper.flipping .card-outer-frame>* {
       transform: translateZ(0px) !important;
       transition: none !important;
     }
@@ -1213,6 +1211,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- Ambient Animated Background Grid -->
@@ -1229,7 +1228,8 @@
       <button class="btn-header" id="btnGyro" onclick="toggleGyroscope()">
         <i class="fa-solid fa-mobile-screen"></i> 陀螺儀感應
       </button>
-      <button class="btn-header" id="btnCalibrateGyro" onclick="forceRecalibrateGyro()" style="display:none; background: rgba(245, 158, 11, 0.25); border-color: #f59e0b;">
+      <button class="btn-header" id="btnCalibrateGyro" onclick="forceRecalibrateGyro()"
+        style="display:none; background: rgba(245, 158, 11, 0.25); border-color: #f59e0b;">
         <i class="fa-solid fa-crosshairs"></i> 姿態歸零
       </button>
       <button class="btn-header" onclick="resetCardView()">
@@ -1245,11 +1245,11 @@
     <section class="stage-area">
       <div class="card-scene" id="cardScene" data-foil="silver" data-flipped="false">
         <div class="card-wrapper" id="cardWrapper">
-          
+
           <!-- Card Front Face -->
           <div class="card-face card-front">
             <div class="card-outer-frame" id="cardOuterFrame">
-              
+
               <!-- Section 1: Header -->
               <div class="card-header">
                 <div class="card-header-left">
@@ -1312,7 +1312,8 @@
                         <span class="energy-orb"><i class="fa-solid fa-microchip"></i></span>
                         <span class="energy-orb"><i class="fa-solid fa-camera"></i></span>
                       </div>
-                      <div class="card-skill-name" id="skill2Name" contenteditable="true">【極致應用・Ultimate Synthesis】</div>
+                      <div class="card-skill-name" id="skill2Name" contenteditable="true">【極致應用・Ultimate Synthesis】
+                      </div>
                     </div>
                     <div class="card-skill-dmg" id="skill2Dmg" contenteditable="true">500</div>
                   </div>
@@ -1326,11 +1327,13 @@
               <div class="card-footer">
                 <div class="footer-stat-col">
                   <span class="footer-stat-label">弱點</span>
-                  <span class="footer-stat-val" id="cardWeakness" contenteditable="true"><i class="fa-solid fa-wand-magic-sparkles" style="color:#a855f7;"></i> 精神藍 ×3</span>
+                  <span class="footer-stat-val" id="cardWeakness" contenteditable="true"><i
+                      class="fa-solid fa-wand-magic-sparkles" style="color:#a855f7;"></i> 精神藍 ×3</span>
                 </div>
                 <div class="footer-stat-col">
                   <span class="footer-stat-label">抗性</span>
-                  <span class="footer-stat-val" id="cardResistance" contenteditable="true"><i class="fa-solid fa-fire" style="color:#f43f5e;"></i> 創發紅 -100</span>
+                  <span class="footer-stat-val" id="cardResistance" contenteditable="true"><i class="fa-solid fa-fire"
+                      style="color:#f43f5e;"></i> 創發紅 -100</span>
                 </div>
                 <div class="footer-stat-col">
                   <span class="footer-stat-label">調度成本</span>
@@ -1385,7 +1388,7 @@
 
     <!-- RIGHT: Glassmorphism Interactive Control Panel -->
     <aside class="control-panel">
-      
+
       <div class="panel-header">
         <div class="panel-title">
           <i class="fa-solid fa-sliders"></i> 卡牌工坊與客製化控制
@@ -1408,7 +1411,7 @@
 
       <!-- TAB 1: STYLES & FOIL EFFECT -->
       <div class="tab-content active" id="tab-style">
-        
+
         <!-- Foil Mode Picker -->
         <div class="form-group">
           <label class="form-label">
@@ -1416,20 +1419,28 @@
           </label>
           <div class="option-grid" id="foilGrid">
             <div class="option-card" onclick="setFoilMode('cosmos', this)">
-              <div class="option-color-dot" style="background: linear-gradient(135deg, #ec4899, #06b6d4, #f59e0b);"></div>
-              <div class="option-title">Cosmos Holo<br><small style="color:#94a3b8;font-weight:normal;">宇宙星雲彩虹</small></div>
+              <div class="option-color-dot" style="background: linear-gradient(135deg, #ec4899, #06b6d4, #f59e0b);">
+              </div>
+              <div class="option-title">Cosmos Holo<br><small style="color:#94a3b8;font-weight:normal;">宇宙星雲彩虹</small>
+              </div>
             </div>
             <div class="option-card" onclick="setFoilMode('rainbow', this)">
-              <div class="option-color-dot" style="background: linear-gradient(135deg, #ef4444, #10b981, #3b82f6);"></div>
-              <div class="option-title">Rainbow Secret<br><small style="color:#94a3b8;font-weight:normal;">彩虹極光光束</small></div>
+              <div class="option-color-dot" style="background: linear-gradient(135deg, #ef4444, #10b981, #3b82f6);">
+              </div>
+              <div class="option-title">Rainbow Secret<br><small
+                  style="color:#94a3b8;font-weight:normal;">彩虹極光光束</small></div>
             </div>
             <div class="option-card" onclick="setFoilMode('gold', this)">
-              <div class="option-color-dot" style="background: linear-gradient(135deg, #fef08a, #d97706, #78350f);"></div>
-              <div class="option-title">Gold Ultra<br><small style="color:#94a3b8;font-weight:normal;">黑金高奢浮雕</small></div>
+              <div class="option-color-dot" style="background: linear-gradient(135deg, #fef08a, #d97706, #78350f);">
+              </div>
+              <div class="option-title">Gold Ultra<br><small style="color:#94a3b8;font-weight:normal;">黑金高奢浮雕</small>
+              </div>
             </div>
             <div class="option-card selected" onclick="setFoilMode('silver', this)">
-              <div class="option-color-dot" style="background: linear-gradient(135deg, #ffffff, #94a3b8, #0f172a);"></div>
-              <div class="option-title">Silver Phantom<br><small style="color:#94a3b8;font-weight:normal;">冷冽銀鏡 (預設)</small></div>
+              <div class="option-color-dot" style="background: linear-gradient(135deg, #ffffff, #94a3b8, #0f172a);">
+              </div>
+              <div class="option-title">Silver Phantom<br><small style="color:#94a3b8;font-weight:normal;">冷冽銀鏡
+                  (預設)</small></div>
             </div>
           </div>
         </div>
@@ -1482,7 +1493,8 @@
           <div class="file-upload-box" onclick="document.getElementById('imageUploader').click()">
             <i class="fa-solid fa-cloud-arrow-up"></i>
             <div class="file-upload-text">點擊上傳或拖曳個人照片至此 (PNG, JPG, WebP)</div>
-            <input type="file" id="imageUploader" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+            <input type="file" id="imageUploader" accept="image/*" style="display:none;"
+              onchange="handleImageUpload(event)">
           </div>
         </div>
 
@@ -1490,9 +1502,10 @@
 
       <!-- TAB 2: FINE-TUNING PARAMETERS -->
       <div class="tab-content" id="tab-params">
-        
+
         <div class="form-group">
-          <label class="form-label" style="color:#f59e0b; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem;">
+          <label class="form-label"
+            style="color:#f59e0b; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem;">
             <span><i class="fa-solid fa-cube"></i> 3D 視差與動態傾角控制</span>
           </label>
         </div>
@@ -1500,21 +1513,24 @@
         <div class="form-group">
           <label class="form-label">
             <span>最大傾斜角度 (Max Tilt Angle)</span>
-            <span id="valTiltAngle">16°</span>
+            <span id="valTiltAngle">30°</span>
           </label>
-          <input type="range" class="form-control" min="5" max="35" value="16" oninput="updateParam('tiltAngle', this.value)">
+          <input type="range" class="form-control" min="5" max="35" value="16"
+            oninput="updateParam('tiltAngle', this.value)">
         </div>
 
         <div class="form-group">
           <label class="form-label">
             <span>3D 圖層立體深度倍率 (Z-Depth Multiplier)</span>
-            <span id="valZDepth">1.0x</span>
+            <span id="valZDepth">0.2x</span>
           </label>
-          <input type="range" class="form-control" min="0.2" max="2.5" step="0.1" value="1.0" oninput="updateParam('zDepth', this.value)">
+          <input type="range" class="form-control" min="0.2" max="2.5" step="0.1" value="1.0"
+            oninput="updateParam('zDepth', this.value)">
         </div>
 
         <div class="form-group">
-          <label class="form-label" style="color:#38bdf8; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
+          <label class="form-label"
+            style="color:#38bdf8; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
             <span><i class="fa-solid fa-sun"></i> 全息箔膜光學控制</span>
           </label>
         </div>
@@ -1524,7 +1540,8 @@
             <span>全息箔膜不透明度 (Foil Opacity)</span>
             <span id="valFoilOpacity">70%</span>
           </label>
-          <input type="range" class="form-control" min="0" max="100" value="70" oninput="updateParam('foilOpacity', this.value)">
+          <input type="range" class="form-control" min="0" max="100" value="70"
+            oninput="updateParam('foilOpacity', this.value)">
         </div>
 
         <div class="form-group">
@@ -1532,7 +1549,8 @@
             <span>高光光斑聚焦範圍 (Glare Spot Size)</span>
             <span id="valGlareSize">60%</span>
           </label>
-          <input type="range" class="form-control" min="20" max="100" value="60" oninput="updateParam('glareSize', this.value)">
+          <input type="range" class="form-control" min="20" max="100" value="60"
+            oninput="updateParam('glareSize', this.value)">
         </div>
 
         <div class="form-group">
@@ -1547,7 +1565,8 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" style="color:#34d399; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
+          <label class="form-label"
+            style="color:#34d399; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3rem; margin-top: 0.5rem;">
             <span><i class="fa-solid fa-sliders"></i> 肖像插畫位置與濾鏡</span>
           </label>
         </div>
@@ -1558,14 +1577,16 @@
               <span>插畫縮放</span>
               <span id="valArtScale">100%</span>
             </label>
-            <input type="range" class="form-control" min="80" max="200" value="100" oninput="updateParam('artScale', this.value)">
+            <input type="range" class="form-control" min="80" max="200" value="100"
+              oninput="updateParam('artScale', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">
               <span>插畫 X 軸位移</span>
               <span id="valArtX">0px</span>
             </label>
-            <input type="range" class="form-control" min="-50" max="50" value="0" oninput="updateParam('artX', this.value)">
+            <input type="range" class="form-control" min="-50" max="50" value="0"
+              oninput="updateParam('artX', this.value)">
           </div>
         </div>
 
@@ -1575,14 +1596,16 @@
               <span>插畫 Y 軸位移</span>
               <span id="valArtY">0px</span>
             </label>
-            <input type="range" class="form-control" min="-50" max="50" value="0" oninput="updateParam('artY', this.value)">
+            <input type="range" class="form-control" min="-50" max="50" value="0"
+              oninput="updateParam('artY', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">
               <span>插畫亮度</span>
               <span id="valArtBrightness">100%</span>
             </label>
-            <input type="range" class="form-control" min="50" max="150" value="100" oninput="updateParam('artBrightness', this.value)">
+            <input type="range" class="form-control" min="50" max="150" value="100"
+              oninput="updateParam('artBrightness', this.value)">
           </div>
         </div>
 
@@ -1596,91 +1619,107 @@
 
       <!-- TAB 3: CONTENT EDITING -->
       <div class="tab-content" id="tab-content">
-        
+
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">卡牌名稱</label>
-            <input type="text" class="form-control" id="inputCardName" value="查研觀攝" oninput="syncCardText('cardName', this.value)">
+            <input type="text" class="form-control" id="inputCardName" value="查研觀攝"
+              oninput="syncCardText('cardName', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">生命數值 (HP)</label>
-            <input type="text" class="form-control" id="inputCardHp" value="1000" oninput="syncCardText('cardHp', this.value)">
+            <input type="text" class="form-control" id="inputCardHp" value="1220"
+              oninput="syncCardText('cardHp', this.value)">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">階級標記 (Stage)</label>
-            <input type="text" class="form-control" id="inputCardStage" value="SPECIALIST" oninput="syncCardText('cardStage', this.value)">
+            <input type="text" class="form-control" id="inputCardStage" value="SPECIALIST"
+              oninput="syncCardText('cardStage', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">稀有度印記 (Stamp)</label>
-            <input type="text" class="form-control" id="inputCardStamp" value="SSR ✦ LEGEND" oninput="syncCardText('cardStamp', this.value)">
+            <input type="text" class="form-control" id="inputCardStamp" value="SSR ✦ LEGEND"
+              oninput="syncCardText('cardStamp', this.value)">
           </div>
         </div>
 
         <!-- Passive Trait -->
         <div class="form-group">
           <label class="form-label">核心特性標題</label>
-          <input type="text" class="form-control" id="inputPassiveTitle" value="【特性】全焦段聚焦・Multi-Focus" oninput="syncCardText('cardPassiveTitle', this.value)">
+          <input type="text" class="form-control" id="inputPassiveTitle" value="【特性】全焦段聚焦・Multi-Focus"
+            oninput="syncCardText('cardPassiveTitle', this.value)">
         </div>
         <div class="form-group">
           <label class="form-label">特性效果描述</label>
-          <textarea class="form-control" id="inputPassiveDesc" oninput="syncCardText('cardPassiveDesc', this.value)">切換工程架構邏輯與單眼鏡頭視角，觀察精準度提升 40%，且不受資訊過載干擾。</textarea>
+          <textarea class="form-control" id="inputPassiveDesc"
+            oninput="syncCardText('cardPassiveDesc', this.value)">切換工程架構邏輯與單眼鏡頭視角，觀察精準度提升 40%，且不受資訊過載干擾。</textarea>
         </div>
 
         <!-- Skill 1 -->
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">招式一名稱</label>
-            <input type="text" class="form-control" id="inputSkill1Name" value="【觀察紀錄員・Vision Recorder】" oninput="syncCardText('skill1Name', this.value)">
+            <input type="text" class="form-control" id="inputSkill1Name" value="【觀察紀錄員・Vision Recorder】"
+              oninput="syncCardText('skill1Name', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">傷害值</label>
-            <input type="text" class="form-control" id="inputSkill1Dmg" value="180+" oninput="syncCardText('skill1Dmg', this.value)">
+            <input type="text" class="form-control" id="inputSkill1Dmg" value="180+"
+              oninput="syncCardText('skill1Dmg', this.value)">
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">招式一敘述</label>
-          <textarea class="form-control" id="inputSkill1Desc" oninput="syncCardText('skill1Desc', this.value)">透過單眼焦距精準捕捉全景細節脈絡，重構結構邏輯並對目標區域造成高額衝擊。</textarea>
+          <textarea class="form-control" id="inputSkill1Desc"
+            oninput="syncCardText('skill1Desc', this.value)">透過單眼焦距精準捕捉全景細節脈絡，重構結構邏輯並對目標區域造成高額衝擊。</textarea>
         </div>
 
         <!-- Skill 2 -->
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">奧義技能名稱</label>
-            <input type="text" class="form-control" id="inputSkill2Name" value="【極致應用・Ultimate Synthesis】" oninput="syncCardText('skill2Name', this.value)">
+            <input type="text" class="form-control" id="inputSkill2Name" value="【極致應用・Ultimate Synthesis】"
+              oninput="syncCardText('skill2Name', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">傷害值</label>
-            <input type="text" class="form-control" id="inputSkill2Dmg" value="500" oninput="syncCardText('skill2Dmg', this.value)">
+            <input type="text" class="form-control" id="inputSkill2Dmg" value="500"
+              oninput="syncCardText('skill2Dmg', this.value)">
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">奧義技能敘述</label>
-          <textarea class="form-control" id="inputSkill2Desc" oninput="syncCardText('skill2Desc', this.value)">融合工程邏輯與極致視覺美學，發動多工多模態全息打擊，並獲得額外連擊行動回合。</textarea>
+          <textarea class="form-control" id="inputSkill2Desc"
+            oninput="syncCardText('skill2Desc', this.value)">融合工程邏輯與極致視覺美學，發動多工多模態全息打擊，並獲得額外連擊行動回合。</textarea>
         </div>
 
         <!-- Footer Stats -->
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">弱點 (Weakness)</label>
-            <input type="text" class="form-control" id="inputWeakness" value="🔮 精神藍 ×3" oninput="syncCardText('cardWeakness', this.value)">
+            <input type="text" class="form-control" id="inputWeakness" value="🔮 精神藍 ×3"
+              oninput="syncCardText('cardWeakness', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">抗性 (Resistance)</label>
-            <input type="text" class="form-control" id="inputResistance" value="🔥 創發紅 -100" oninput="syncCardText('cardResistance', this.value)">
+            <input type="text" class="form-control" id="inputResistance" value="🔥 創發紅 -100"
+              oninput="syncCardText('cardResistance', this.value)">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">繪師署名 (Artist)</label>
-            <input type="text" class="form-control" id="inputArtist" value="Illus. 查研觀攝 chuckphotos" oninput="syncCardText('cardArtist', this.value)">
+            <input type="text" class="form-control" id="inputArtist" value="Illus. 查研觀攝 chuckphotos"
+              oninput="syncCardText('cardArtist', this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">卡牌編號 (No.)</label>
-            <input type="text" class="form-control" id="inputNumber" value="No. 001/001 ★★★ SSR" oninput="syncCardText('cardNumber', this.value)">
+            <input type="text" class="form-control" id="inputNumber" value="No. 001/001 ★★★ SSR"
+              oninput="syncCardText('cardNumber', this.value)">
           </div>
         </div>
 
@@ -1845,7 +1884,7 @@
         const px = Math.max(15, Math.min(85, 50 + (currentRotateY / maxTiltAngle) * 32));
         const py = Math.max(15, Math.min(85, 50 + (-currentRotateX / maxTiltAngle) * 32));
 
-        const dist = Math.min(Math.sqrt((currentRotateX / maxTiltAngle)**2 + (currentRotateY / maxTiltAngle)**2), 1);
+        const dist = Math.min(Math.sqrt((currentRotateX / maxTiltAngle) ** 2 + (currentRotateY / maxTiltAngle) ** 2), 1);
 
         if (cardScene) {
           cardScene.style.setProperty('--pointer-x', `${px.toFixed(1)}%`);
@@ -1864,7 +1903,7 @@
     function toggleGyroscope() {
       const btnGyro = document.getElementById('btnGyro');
       const btnCalibrate = document.getElementById('btnCalibrateGyro');
-      
+
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
           .then(permissionState => {
@@ -1949,7 +1988,7 @@
     function updateParam(paramKey, val) {
       const root = document.documentElement;
 
-      switch(paramKey) {
+      switch (paramKey) {
         case 'tiltAngle':
           maxTiltAngle = parseFloat(val);
           const elTilt = document.getElementById('valTiltAngle');
@@ -2092,7 +2131,7 @@
       const file = e.target.files && e.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(evt) {
+        reader.onload = function (evt) {
           const imgEl = document.getElementById('cardArtImg');
           if (imgEl) imgEl.src = evt.target.result;
         };
@@ -2227,4 +2266,5 @@
     }
   </script>
 </body>
+
 </html>
