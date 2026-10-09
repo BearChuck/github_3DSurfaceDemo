@@ -1086,6 +1086,9 @@
       <button class="btn-header" id="btnGyro" onclick="toggleGyroscope()">
         <i class="fa-solid fa-mobile-screen"></i> 陀螺儀感應
       </button>
+      <button class="btn-header" id="btnCalibrateGyro" onclick="forceRecalibrateGyro()" style="display:none; background: rgba(245, 158, 11, 0.25); border-color: #f59e0b;">
+        <i class="fa-solid fa-crosshairs"></i> 姿態歸零
+      </button>
       <button class="btn-header" onclick="resetCardView()">
         <i class="fa-solid fa-rotate-left"></i> 重設視角
       </button>
@@ -1644,57 +1647,122 @@
       resetCardView();
     });
 
+    /* --------------------------------------------------------------------------
+       Gyroscope Calibration, Low-Pass Damping & Motion Engine
+       -------------------------------------------------------------------------- */
+    let isGyroActive = false;
+    let hasGyroCalibrated = false;
+    let baseBeta = 0;
+    let baseGamma = 0;
+
+    let targetRotateX = 0;
+    let targetRotateY = 0;
+    let currentRotateX = 0;
+    let currentRotateY = 0;
+    let animFrameId = null;
+
+    // Smooth 60fps animation loop using Exponential Damping Filter
+    function updateCardTransformLoop() {
+      if (!isGyroActive) return;
+
+      // Exponential Low-Pass Filter (0.16 smoothing factor for fluid motion)
+      currentRotateX += (targetRotateX - currentRotateX) * 0.16;
+      currentRotateY += (targetRotateY - currentRotateY) * 0.16;
+
+      // Clamped spotlight glare positioning (safely bounded between 15% and 85%)
+      const px = Math.max(15, Math.min(85, 50 + (currentRotateY / maxTiltAngle) * 32));
+      const py = Math.max(15, Math.min(85, 50 + (-currentRotateX / maxTiltAngle) * 32));
+
+      // Distance ratio for depth shadow
+      const dist = Math.min(Math.sqrt((currentRotateX / maxTiltAngle)**2 + (currentRotateY / maxTiltAngle)**2), 1);
+
+      cardScene.style.setProperty('--pointer-x', `${px}%`);
+      cardScene.style.setProperty('--pointer-y', `${py}%`);
+      cardScene.style.setProperty('--card-rotate-x', `${currentRotateX.toFixed(2)}deg`);
+      cardScene.style.setProperty('--card-rotate-y', `${currentRotateY.toFixed(2)}deg`);
+      cardScene.style.setProperty('--pointer-from-center', dist.toFixed(2));
+
+      cardWrapper.style.transform = `rotateX(${currentRotateX.toFixed(2)}deg) rotateY(${currentRotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+
+      animFrameId = requestAnimationFrame(updateCardTransformLoop);
+    }
+
     function toggleGyroscope() {
       const btnGyro = document.getElementById('btnGyro');
+      const btnCalibrate = document.getElementById('btnCalibrateGyro');
       
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
           .then(permissionState => {
             if (permissionState === 'granted') {
-              enableGyro(btnGyro);
+              enableGyro(btnGyro, btnCalibrate);
             } else {
               alert('未獲取行動裝置陀螺儀權限');
             }
           })
           .catch(console.error);
       } else if (window.DeviceOrientationEvent) {
-        enableGyro(btnGyro);
+        enableGyro(btnGyro, btnCalibrate);
       } else {
         alert('您的裝置不支援陀螺儀感應功能');
       }
     }
 
-    function enableGyro(btn) {
+    function enableGyro(btn, btnCalibrate) {
       isGyroActive = !isGyroActive;
+      hasGyroCalibrated = false;
+
       if (isGyroActive) {
         btn.style.background = 'rgba(245, 158, 11, 0.4)';
         btn.style.borderColor = '#f59e0b';
+        btn.innerHTML = '<i class="fa-solid fa-mobile-screen"></i> 陀螺儀 (開啟)';
+        if (btnCalibrate) btnCalibrate.style.display = 'inline-flex';
+
         window.addEventListener('deviceorientation', handleOrientation);
+        animFrameId = requestAnimationFrame(updateCardTransformLoop);
       } else {
         btn.style.background = 'rgba(255, 255, 255, 0.06)';
         btn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+        btn.innerHTML = '<i class="fa-solid fa-mobile-screen"></i> 陀螺儀感應';
+        if (btnCalibrate) btnCalibrate.style.display = 'none';
+
         window.removeEventListener('deviceorientation', handleOrientation);
+        if (animFrameId) cancelAnimationFrame(animFrameId);
         resetCardView();
       }
     }
 
+    function forceRecalibrateGyro() {
+      hasGyroCalibrated = false;
+      currentRotateX = 0;
+      currentRotateY = 0;
+      targetRotateX = 0;
+      targetRotateY = 0;
+    }
+
     function handleOrientation(e) {
       if (!isGyroActive) return;
-      const gamma = e.gamma || 0;
-      const beta = e.beta || 0;
+      const beta = e.beta || 0;   // -180 to 180 (pitch)
+      const gamma = e.gamma || 0; // -90 to 90 (roll)
 
-      const rotateY = Math.max(-maxTiltAngle * 1.2, Math.min(maxTiltAngle * 1.2, gamma * 0.6));
-      const rotateX = Math.max(-maxTiltAngle * 1.2, Math.min(maxTiltAngle * 1.2, (beta - 45) * -0.5));
+      // Auto capture current holding posture as zero-reference baseline
+      if (!hasGyroCalibrated) {
+        baseBeta = beta;
+        baseGamma = gamma;
+        hasGyroCalibrated = true;
+      }
 
-      const px = 50 + (rotateY / maxTiltAngle) * 40;
-      const py = 50 + (rotateX / maxTiltAngle) * 40;
+      // Calculate relative delta angles from holding baseline
+      let deltaBeta = beta - baseBeta;
+      let deltaGamma = gamma - baseGamma;
 
-      cardScene.style.setProperty('--pointer-x', `${px}%`);
-      cardScene.style.setProperty('--pointer-y', `${py}%`);
-      cardScene.style.setProperty('--card-rotate-x', `${rotateX}deg`);
-      cardScene.style.setProperty('--card-rotate-y', `${rotateY}deg`);
+      // Handle wrap-around
+      if (deltaBeta > 180) deltaBeta -= 360;
+      if (deltaBeta < -180) deltaBeta += 360;
 
-      cardWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      // Scale and bound tilt targets strictly within maxTiltAngle
+      targetRotateY = Math.max(-maxTiltAngle, Math.min(maxTiltAngle, deltaGamma * 0.75));
+      targetRotateX = Math.max(-maxTiltAngle, Math.min(maxTiltAngle, -deltaBeta * 0.75));
     }
 
     /* --------------------------------------------------------------------------
